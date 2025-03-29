@@ -13,10 +13,16 @@ dependencies = [
     "gpxpy (>=1.6.2,<2.0.0)",
     "pandas (>=2.2.3,<3.0.0)",
     "pillow (>=11.1.0,<12.0.0)",
-    "piexif (>=1.1.3,<2.0.0)"
+    "piexif (>=1.1.3,<2.0.0)",
+    "sqlalchemy (>=2.0.40,<3.0.0)",
 ]
 
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.poetry]
+dependencies-external = [
+    "python3-tk"
+]
