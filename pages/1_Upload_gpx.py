@@ -18,7 +18,8 @@ points = {
     'longitude': [],
     'elevation': [],
     'type': [],
-    'color': []
+    'color': [],
+    'name': []
 }
 if gpx_file is not None:
     doc = gpx.parse(gpx_file)
@@ -32,6 +33,7 @@ if gpx_file is not None:
                 points['elevation'].append(point.elevation)
                 points['type'].append('point')
                 points['color'].append('#00ff00')
+                points['name'].append(None)
 
 table = pd.DataFrame.from_records(points).set_index('time')
 st.session_state['gpx_info'] = table
