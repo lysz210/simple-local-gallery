@@ -1,8 +1,9 @@
 from pathlib import Path
 from tkinter.filedialog import askdirectory
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, func, select
 import streamlit as st
 from app import models
+
 
 st.set_page_config(
     page_title="Simple Local Gallery",
@@ -33,5 +34,7 @@ st.write(st.session_state['gallery_root'])
 st.write(db_file)
 
 with connection.session as s:
-    photos = s.query(models.Photo).all()
-    st.write(f"Found {len(photos)} photos in the database.")
+    photos_count = s.query(models.Photo).count()
+    st.write(f"Found {photos_count} photos in the database.")
+    tracks_aggragation = s.query(func.count(models.GpsPoint.track)).group_by(models.GpsPoint.track).all()
+    st.write(tracks_aggragation)
