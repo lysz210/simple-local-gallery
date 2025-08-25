@@ -1,3 +1,4 @@
+from pathlib import Path
 import pandas as pd
 import streamlit as st
 import gpxpy as gpx
@@ -7,11 +8,25 @@ st.set_page_config(
     page_title="Gpx",
 )
 
+if 'gallery_root' not in st.session_state:
+    st.switch_page("SimpleLocalGallery.py")
+
+gallery_root = Path(st.session_state['gallery_root'])
+
+
+for gpx_path in gallery_root.glob('**/*.gpx'):
+    
+    doc = gpx.parse(gpx_path.open('r'))
+    track_id = doc.link.rsplit('-', 1)[-1]
+    with st.expander(f"Track[{track_id}] '{doc.name}'"):
+        st.write(gpx_path)
+        st.link_button(label="wikiloc page", url=doc.link)
+
+
 gpx_file = st.file_uploader("gpx file",
                             type='gpx',
                             accept_multiple_files=False,
                             key="gpx_file")
-
 points = {
     'time': [],
     'latitude': [],
