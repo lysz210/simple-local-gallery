@@ -33,7 +33,8 @@ class GpsPoint(Base):
     __tablename__ = "points"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    track: Mapped[str] = mapped_column()
+    track_id: Mapped[int] = mapped_column()
+    track: Mapped[Optional[str]] = mapped_column()
     latitude: Mapped[float] = mapped_column()
     longitude: Mapped[float] = mapped_column()
     elevation: Mapped[Optional[float]] = mapped_column()
@@ -42,5 +43,5 @@ class GpsPoint(Base):
     photos: Mapped[Optional[list["Photo"]]] = relationship(back_populates="gps_point")
     
     __table_args__ = (
-        UniqueConstraint('track', 'timestamp', name='_gps_unique_track_point'),
+        UniqueConstraint('track_id', 'timestamp', name='_gps_unique_track_point'),
     )
