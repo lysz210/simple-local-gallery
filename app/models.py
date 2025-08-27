@@ -22,7 +22,8 @@ class Photo(Base):
     __tablename__ = "photos"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    filename: Mapped[str] = mapped_column(unique=True)
+    path: Mapped[str] = mapped_column()
+    filename: Mapped[str] = mapped_column(unique=True, sqlite_on_conflict_unique="IGNORE")
     description: Mapped[str] = mapped_column()
     original_created_at: Mapped[datetime] = mapped_column()
 
@@ -33,7 +34,7 @@ class GpsPoint(Base):
     __tablename__ = "points"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    track_id: Mapped[int] = mapped_column()
+    track_id: Mapped[str] = mapped_column()
     track: Mapped[Optional[str]] = mapped_column()
     latitude: Mapped[float] = mapped_column()
     longitude: Mapped[float] = mapped_column()
