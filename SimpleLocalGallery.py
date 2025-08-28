@@ -3,7 +3,7 @@ from tkinter.filedialog import askdirectory
 import pandas as pd
 from sqlalchemy import func
 import streamlit as st
-from app import entities
+from app import storage
 
 
 st.set_page_config(
@@ -25,24 +25,13 @@ if 'gallery_root' not in st.session_state:
 gallery_root = Path(st.session_state['gallery_root'])
 
 db_file = gallery_root / 'photos.db'
-connection = st.connection(
-    "photos",
-    "sql",
-    url=f"sqlite:///{db_file}"
-)
+connection = storage.get_connection()
 
-entities.Base.metadata.create_all(connection.engine)
+storage.Base.metadata.create_all(connection.engine)
 st.write(st.session_state['gallery_root'])
-st.write(db_file)
 
-with connection.session as s:
-    photos_count = s.query(entities.Photo).count()
-    st.write(f"Found {photos_count} photos in the database.")
-    tracks_aggragation = s.query(
-            entities.GpsPoint.track_uid,
-            func.count(entities.GpsPoint.track).label('points_count'),
-            func.min(entities.GpsPoint.timestamp).label('start_time'),
-            func.max(entities.GpsPoint.timestamp).label('end_time'),
-        ).group_by(entities.GpsPoint.track_uid).all()
-    st.write(tracks_aggragation)
-    st.table(pd.DataFrame(tracks_aggragation))
+st.write(f"Found {storage.count_photos()} photos in the database.")
+
+tracks_aggragation = storage.tracks_summary()
+st.write(tracks_aggragation)
+st.table(pd.DataFrame(tracks_aggragation))

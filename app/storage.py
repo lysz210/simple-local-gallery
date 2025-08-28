@@ -14,6 +14,10 @@ from sqlalchemy.orm import (
     mapped_column,
     relationship
 )
+import streamlit as st
+from pathlib import Path
+
+from app import models
 
 class Base(DeclarativeBase):
     pass
@@ -57,3 +61,45 @@ class GpsPoint(Base):
     __table_args__ = (
         UniqueConstraint('track_uid', 'timestamp', name='_gps_unique_track_point'),
     )
+
+def get_connection():
+    return st.connection(
+        "photos", type="sql",
+         url=f"sqlite:///{Path(st.session_state['gallery_root']) / 'photos.db'}"
+    )
+
+def to_entity_point(point: models.Point) -> GpsPoint:
+    return GpsPoint(
+        timestamp=point.time,
+        latitude=point.latitude,
+        longitude=point.longitude,
+        elevation=point.elevation,
+    )
+
+def save_track(track_uid: int, track_name: str, points: list[models.Point]):
+    connection = get_connection()
+    with connection.session as s:
+        track = GpsTrack(
+            uid=track_uid,
+            name=track_name,
+            description=None,
+            points=[to_entity_point(point) for point in points]
+        )
+        s.add(track)
+        s.commit()
+    st.success(f"Imported {len(points)} points for track '{track_uid} - {track_name}'")
+
+def count_photos() -> int:
+    connection = get_connection()
+    with connection.session as s:
+        return s.query(Photo).count()
+
+def tracks_summary():
+    connection = get_connection()
+    with connection.session as s:
+        return s.query(
+            GpsPoint.track_uid,
+            func.count(GpsPoint.track).label('points_count'),
+            func.min(GpsPoint.timestamp).label('start_time'),
+            func.max(GpsPoint.timestamp).label('end_time'),
+        ).group_by(GpsPoint.track_uid).all()
