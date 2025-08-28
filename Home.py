@@ -1,6 +1,6 @@
 import streamlit as st
 from tkinter.filedialog import askopenfilename
-from app.models import Photo
+from app.entities import Photo
 
 st.set_page_config(
     page_title="Simple Local Gallery",

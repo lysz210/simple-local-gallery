@@ -3,7 +3,7 @@ from tkinter.filedialog import askdirectory
 import pandas as pd
 from sqlalchemy import func
 import streamlit as st
-from app import models
+from app import entities
 
 
 st.set_page_config(
@@ -31,19 +31,18 @@ connection = st.connection(
     url=f"sqlite:///{db_file}"
 )
 
-models.Base.metadata.create_all(connection.engine)
+entities.Base.metadata.create_all(connection.engine)
 st.write(st.session_state['gallery_root'])
 st.write(db_file)
 
 with connection.session as s:
-    photos_count = s.query(models.Photo).count()
+    photos_count = s.query(entities.Photo).count()
     st.write(f"Found {photos_count} photos in the database.")
     tracks_aggragation = s.query(
-            models.GpsPoint.track_id,
-            models.GpsPoint.track,
-            func.count(models.GpsPoint.track).label('points_count'),
-            func.min(models.GpsPoint.timestamp).label('start_time'),
-            func.max(models.GpsPoint.timestamp).label('end_time'),
-        ).group_by(models.GpsPoint.track_id).all()
+            entities.GpsPoint.track_uid,
+            func.count(entities.GpsPoint.track).label('points_count'),
+            func.min(entities.GpsPoint.timestamp).label('start_time'),
+            func.max(entities.GpsPoint.timestamp).label('end_time'),
+        ).group_by(entities.GpsPoint.track_uid).all()
     st.write(tracks_aggragation)
     st.table(pd.DataFrame(tracks_aggragation))

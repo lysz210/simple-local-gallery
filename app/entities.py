@@ -30,19 +30,30 @@ class Photo(Base):
     gps_point_id: Mapped[Optional[int]] = mapped_column(ForeignKey("points.id"))
     gps_point: Mapped[Optional["GpsPoint"]] = relationship(back_populates="photos")
 
+class GpsTrack(Base):
+    __tablename__ = "tracks"
+
+    uid: Mapped[str] = mapped_column(primary_key=True)
+    name: Mapped[str] = mapped_column()
+    description: Mapped[Optional[str]] = mapped_column()
+    timestamp: Mapped[datetime] = mapped_column(DateTime(timezone=False), server_default=func.datetime('now'))
+
+    points: Mapped[Optional[list["GpsPoint"]]] = relationship(back_populates="track")
+
 class GpsPoint(Base):
     __tablename__ = "points"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    track_id: Mapped[str] = mapped_column()
-    track: Mapped[Optional[str]] = mapped_column()
     latitude: Mapped[float] = mapped_column()
     longitude: Mapped[float] = mapped_column()
     elevation: Mapped[Optional[float]] = mapped_column()
-    timestamp: Mapped[datetime] = mapped_column(DateTime(timezone=False), server_default=func.utcnow())
+    timestamp: Mapped[datetime] = mapped_column(DateTime(timezone=False), server_default=func.datetime('now'))
+
+    track_uid: Mapped[Optional[str]] = mapped_column(ForeignKey("tracks.uid"))
+    track: Mapped[Optional["GpsTrack"]] = relationship(back_populates="points")
 
     photos: Mapped[Optional[list["Photo"]]] = relationship(back_populates="gps_point")
     
     __table_args__ = (
-        UniqueConstraint('track_id', 'timestamp', name='_gps_unique_track_point'),
+        UniqueConstraint('track_uid', 'timestamp', name='_gps_unique_track_point'),
     )
