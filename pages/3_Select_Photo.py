@@ -45,45 +45,46 @@ def normalize_alt(dec: float|int, altitude_multiplier = 1000) -> altitude_point:
     value = np.floor(dec * altitude_multiplier)
     return int(value), altitude_multiplier
 
-mapped_photos = st.session_state['interpolated_df']
-st.map(data=mapped_photos, color='color', size=1.0)
+st.markdown("# Working in progress...")
+# mapped_photos = st.session_state['interpolated_df']
+# st.map(data=mapped_photos, color='color', size=1.0)
 
-if 'photos' in st.session_state:
-    photos = st.session_state['photos']
-    for image in photos:
-        with st.container():
-            st.write(image.name)
-            st.image(image)
+# if 'photos' in st.session_state:
+#     photos = st.session_state['photos']
+#     for image in photos:
+#         with st.container():
+#             st.write(image.name)
+#             st.image(image)
 
-if st.button('Save', type="primary"):
-    photos_dict = {row['name']: row for row in mapped_photos.to_dict(orient='records')}
-    print(photos_dict)
-    europe_rome = ZoneInfo('Europe/Rome')
-    for photo in photos:
-        image = Image.open(photo)
-        meta = photos_dict.get(photo.name)
-        lat = dec_to_dms(meta['latitude'])
-        lng = dec_to_dms(meta['longitude'])
-        alt = normalize_alt(meta['elevation'])
-        exif = piexif.load(image.info["exif"])
-        metas = exif["Exif"]
-        created_at = metas[piexif.ExifIFD.DateTimeOriginal]
-        originalDatetime = (datetime
-                                .strptime(created_at.decode('utf8'), "%Y:%m:%d %H:%M:%S")
-                                .astimezone(europe_rome).astimezone(timezone.utc)
-                            )
-        new_date = originalDatetime.strftime("%Y:%m:%d")
-        new_time = (originalDatetime.hour, 1), (originalDatetime.minute, 1), (originalDatetime.second, 1)
-        gps = exif['GPS']
-        gps[piexif.GPSIFD.GPSLatitude] = lat
-        gps[piexif.GPSIFD.GPSLatitudeRef] = 'N' if meta['latitude'] >= 0 else 'S'
-        gps[piexif.GPSIFD.GPSLongitude] = lng
-        gps[piexif.GPSIFD.GPSLongitudeRef] = 'E' if meta['longitude'] >= 0 else 'W'
-        gps[piexif.GPSIFD.GPSAltitude] = alt
-        gps[piexif.GPSIFD.GPSDateStamp] = new_date
-        gps[piexif.GPSIFD.GPSTimeStamp] = new_time
+# if st.button('Save', type="primary"):
+#     photos_dict = {row['name']: row for row in mapped_photos.to_dict(orient='records')}
+#     print(photos_dict)
+#     europe_rome = ZoneInfo('Europe/Rome')
+#     for photo in photos:
+#         image = Image.open(photo)
+#         meta = photos_dict.get(photo.name)
+#         lat = dec_to_dms(meta['latitude'])
+#         lng = dec_to_dms(meta['longitude'])
+#         alt = normalize_alt(meta['elevation'])
+#         exif = piexif.load(image.info["exif"])
+#         metas = exif["Exif"]
+#         created_at = metas[piexif.ExifIFD.DateTimeOriginal]
+#         originalDatetime = (datetime
+#                                 .strptime(created_at.decode('utf8'), "%Y:%m:%d %H:%M:%S")
+#                                 .astimezone(europe_rome).astimezone(timezone.utc)
+#                             )
+#         new_date = originalDatetime.strftime("%Y:%m:%d")
+#         new_time = (originalDatetime.hour, 1), (originalDatetime.minute, 1), (originalDatetime.second, 1)
+#         gps = exif['GPS']
+#         gps[piexif.GPSIFD.GPSLatitude] = lat
+#         gps[piexif.GPSIFD.GPSLatitudeRef] = 'N' if meta['latitude'] >= 0 else 'S'
+#         gps[piexif.GPSIFD.GPSLongitude] = lng
+#         gps[piexif.GPSIFD.GPSLongitudeRef] = 'E' if meta['longitude'] >= 0 else 'W'
+#         gps[piexif.GPSIFD.GPSAltitude] = alt
+#         gps[piexif.GPSIFD.GPSDateStamp] = new_date
+#         gps[piexif.GPSIFD.GPSTimeStamp] = new_time
 
-        exif_bytes = piexif.dump(exif)
-        image.save(f"images/{photo.name}", exif=exif_bytes, quality=100)
-        st.write(photo.name)
-        st.write(meta)
+#         exif_bytes = piexif.dump(exif)
+#         image.save(f"images/{photo.name}", exif=exif_bytes, quality=100)
+#         st.write(photo.name)
+#         st.write(meta)
