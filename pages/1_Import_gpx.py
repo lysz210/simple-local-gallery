@@ -18,15 +18,14 @@ if 'gallery_root' not in st.session_state:
 
 gallery_root = Path(st.session_state['gallery_root'])
 
-
-for gpx_path in gallery_root.glob('**/*.gpx'):
-    
+@st.fragment
+def show_gpx_expander(gpx_path: Path):
     doc = gpx.parse(gpx_path.open('r'))
     track_uid = doc.link.rsplit('-', 1)[-1]
     expander = st.expander(f"Track[{track_uid}] '{doc.name}'")
 
     if not expander.expanded:
-        continue
+        return
     expander.write(gpx_path)
     if doc.time:
         expander.write(doc.time.astimezone(timezone.utc).astimezone(ZoneInfo("Europe/Rome")).strftime("%d/%m/%Y %H:%M:%S"))
@@ -40,3 +39,8 @@ for gpx_path in gallery_root.glob('**/*.gpx'):
 
     if expander.button("Import to database", key=doc.name):
         storage.save_track(track_uid, doc.name, points)
+        expander.success(f"Imported {len(points)} points for track '{track_uid} - {doc.name}'")
+
+
+for gpx_path in gallery_root.glob('**/*.gpx'):
+    show_gpx_expander(gpx_path)

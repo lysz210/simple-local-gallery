@@ -91,7 +91,6 @@ def save_track(track_uid: int, track_name: str, points: list[models.Point]):
         )
         s.add(track)
         s.commit()
-    st.success(f"Imported {len(points)} points for track '{track_uid} - {track_name}'")
 
 def count_photos() -> int:
     connection = get_connection()
