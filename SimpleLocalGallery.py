@@ -32,6 +32,6 @@ st.write(st.session_state['gallery_root'])
 
 st.write(f"Found {storage.count_photos()} photos in the database.")
 
-tracks_aggragation = storage.tracks_summary()
-st.write(tracks_aggragation)
-st.table(pd.DataFrame(tracks_aggragation))
+st.table(pd.DataFrame(storage.tracks_summary()))
+
+st.table(pd.DataFrame(storage.photos_summary()))

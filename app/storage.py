@@ -1,5 +1,7 @@
 from typing import Optional
-from datetime import datetime
+from datetime import datetime, timezone
+from zoneinfo import ZoneInfo
+import piexif
 from sqlalchemy import (
     ForeignKey,
     DateTime,
@@ -18,6 +20,8 @@ import streamlit as st
 from pathlib import Path
 
 from app import models
+
+from PIL import Image
 
 class Base(DeclarativeBase):
     pass
@@ -103,3 +107,39 @@ def tracks_summary():
             func.min(GpsPoint.timestamp).label('start_time'),
             func.max(GpsPoint.timestamp).label('end_time'),
         ).group_by(GpsPoint.track_uid).all()
+
+def save_photos(gallery_root: Path, photos_paths: list[Path]):
+    connection = get_connection()
+    europe_rome = ZoneInfo('Europe/Rome')
+    with connection.session as s:
+        photos: list[Photo] = []
+        for photo_path in photos_paths:
+            full_path = gallery_root / photo_path
+            image = Image.open(full_path)
+            exif = piexif.load(image.info["exif"])
+            metas = exif["Exif"]
+            created_at = metas[piexif.ExifIFD.DateTimeOriginal]
+            originalDatetime = (datetime
+                                .strptime(created_at.decode('utf8'), "%Y:%m:%d %H:%M:%S")
+                                .astimezone(europe_rome).astimezone(timezone.utc)
+                            )
+            photo = Photo(
+                path=str(photo_path.parent),
+                filename=photo_path.name,
+                description="",
+                original_created_at=originalDatetime
+            )
+            photos.append(photo)
+        s.add_all(photos)
+        s.commit()
+    st.success(f"Imported {len(photos_paths)} photos")
+
+def photos_summary():
+    connection = get_connection()
+    with connection.session as s:
+        return s.query(
+            Photo.path,
+            func.count(Photo.id).label('photos_count'),
+            func.min(Photo.original_created_at).label('first_taken_at'),
+            func.max(Photo.original_created_at).label('last_taken_at'),
+        ).group_by(Photo.path).all()
