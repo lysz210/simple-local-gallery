@@ -2,7 +2,7 @@ from pathlib import Path
 import secrets
 from tkinter.filedialog import askdirectory
 import warnings
-from typing import Annotated, Any, Literal
+from typing import Annotated, Any, Literal, Optional
 
 from pydantic import (
     AnyUrl,
@@ -12,7 +12,10 @@ from pydantic import (
     model_validator
 )
 from pydantic_settings import BaseSettings, SettingsConfigDict
+from sqlalchemy import create_engine
 from typing_extensions import Self
+
+from ..storage import models
 
 def parse_cors(v: Any) -> list[str] | str:
     if isinstance(v, str) and not v.startswith("["):
@@ -21,6 +24,14 @@ def parse_cors(v: Any) -> list[str] | str:
         return v
     raise ValueError(v)
 
+def ask_for_gallery_root() -> Path:
+    selected = askdirectory(title="Select Gallery Root Directory")
+    return Path(selected)
+
+def init_gallery_root(root: Path) -> None:
+    db_path = root / "photos.db"
+    engine = create_engine(f"sqlite:///{db_path}", echo=True)
+    models.Base.metadata.create_all(engine)
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
@@ -72,12 +83,12 @@ class Settings(BaseSettings):
 
         return self
     
-    GALLERY_ROOT: Path | None = None
+    GALLERY_ROOT: Optional[Path] = None
     @model_validator(mode="after")
     def _check_gallery_root(self) -> Self:
         if self.GALLERY_ROOT is None:
-            selected = askdirectory(title="Select Gallery Root Directory")
-            self.GALLERY_ROOT = Path(selected)
+            self.GALLERY_ROOT = ask_for_gallery_root()
+        init_gallery_root(self.GALLERY_ROOT)
         return self
     
     @computed_field  # type: ignore[prop-decorator]
