@@ -38,6 +38,16 @@ class Photo(Base):
     gps_point_id: Mapped[Optional[int]] = mapped_column(ForeignKey("points.id"))
     gps_point: Mapped[Optional["GpsPoint"]] = relationship(back_populates="photos")
 
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "path": self.path,
+            "filename": self.filename,
+            "description": self.description,
+            "original_created_at": self.original_created_at.isoformat(),
+            "gps_point_id": self.gps_point_id,
+        }
+
 class GpsTrack(Base):
     __tablename__ = "tracks"
 
@@ -142,3 +152,14 @@ def photos_summary():
             func.min(Photo.original_created_at).label('first_taken_at'),
             func.max(Photo.original_created_at).label('last_taken_at'),
         ).group_by(Photo.path).all()
+    
+def get_photos_in_folder(folder: Path | str) -> list[Photo]:
+    gallery_root = Path(st.session_state['gallery_root'])
+    if isinstance(folder, str):
+        folder = Path(folder)
+    
+    if folder.is_absolute():
+        folder = folder.relative_to(gallery_root)
+    connection = get_connection()
+    with connection.session as s:
+        return s.query(Photo).filter(Photo.path == str(folder)).all()

@@ -1,9 +1,14 @@
+import base64
 from datetime import datetime, timezone
+from io import BytesIO
+from pathlib import Path
 from zoneinfo import ZoneInfo
 import piexif
 import streamlit as st
 import numpy as np
-from PIL import Image
+from PIL import Image, ImageOps
+
+from app import storage
 
 type point_value = int
 type point_multiplier = int
@@ -45,7 +50,54 @@ def normalize_alt(dec: float|int, altitude_multiplier = 1000) -> altitude_point:
     value = np.floor(dec * altitude_multiplier)
     return int(value), altitude_multiplier
 
-st.markdown("# Working in progress...")
+gallery_root = Path(st.session_state['gallery_root'])
+
+photos_summary = storage.photos_summary()
+
+select_photos_dir = st.selectbox(
+    'Select photo to geotag',
+    photos_summary,
+    format_func=lambda photo: f"'{photo.path}' with {photo.photos_count} Photos"
+)
+
+st.write(select_photos_dir)
+
+photos = storage.get_photos_in_folder(select_photos_dir.path)
+
+photos_table = []
+
+for photo in photos:
+    image_path = gallery_root / photo.path / photo.filename
+    image = Image.open(image_path)
+    data = photo.to_dict()
+    buffered = BytesIO()
+    image.save(buffered, format="JPEG")
+    img_str = base64.b64encode(buffered.getvalue())
+    data['image'] = f"data:image/jpeg;base64,{img_str.decode()}"
+    photos_table.append(data)
+
+st.dataframe(photos_table,
+             column_config={
+                 'image': st.column_config.ImageColumn(
+                     "Image",
+                     help="Photo preview",
+                     width=240,
+                 ),
+             },
+             hide_index=True,
+             row_height=240
+             )
+
+# with st.form("photo_selection_form"):
+#     for photo in photos:
+#         st.checkbox(f"Select {photo.filename}", key=photo.id, value=False)
+#         st.write(photo.filename)
+#         image_path = gallery_root / photo.path / photo.filename
+#         image = Image.open(image_path)
+#         image = ImageOps.exif_transpose(image)
+#         st.image(image)
+#     st.form_submit_button("Select Photos")
+
 # mapped_photos = st.session_state['interpolated_df']
 # st.map(data=mapped_photos, color='color', size=1.0)
 
