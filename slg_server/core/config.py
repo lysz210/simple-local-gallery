@@ -79,6 +79,12 @@ class Settings(BaseSettings):
             selected = askdirectory(title="Select Gallery Root Directory")
             self.GALLERY_ROOT = Path(selected)
         return self
+    
+    @computed_field  # type: ignore[prop-decorator]
+    @property
+    def sqlite_dsn(self) -> Path:
+        sqlite_path = self.GALLERY_ROOT / "photos.db"
+        return f"sqlite:///{sqlite_path}"
 
 
 settings = Settings()  # type: ignore
