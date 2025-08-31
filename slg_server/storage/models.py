@@ -22,23 +22,13 @@ class Photo(Base):
     __tablename__ = "photos"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    path: Mapped[str] = mapped_column()
+    folder: Mapped[str] = mapped_column()
     filename: Mapped[str] = mapped_column(unique=True, sqlite_on_conflict_unique="IGNORE")
     description: Mapped[str] = mapped_column()
     original_created_at: Mapped[datetime] = mapped_column()
 
     gps_point_id: Mapped[Optional[int]] = mapped_column(ForeignKey("points.id"))
     gps_point: Mapped[Optional["GpsPoint"]] = relationship(back_populates="photos")
-
-    def to_dict(self):
-        return {
-            "id": self.id,
-            "path": self.path,
-            "filename": self.filename,
-            "description": self.description,
-            "original_created_at": self.original_created_at.isoformat(),
-            "gps_point_id": self.gps_point_id,
-        }
 
 class GpsTrack(Base):
     __tablename__ = "tracks"
