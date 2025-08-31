@@ -19,3 +19,10 @@ class PhotoSummary(BaseModel):
 class FolderSummary(BaseModel):
     folder: Path
     total_photos: int
+
+class TrackSummary(BaseModel):
+    uid: str
+    name: str
+    total_points: int
+    start_time: datetime
+    finish_time: datetime
