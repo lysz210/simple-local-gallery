@@ -1,4 +1,6 @@
+from pathlib import Path
 import secrets
+from tkinter.filedialog import askdirectory
 import warnings
 from typing import Annotated, Any, Literal
 
@@ -7,7 +9,7 @@ from pydantic import (
     BeforeValidator,
     EmailStr,
     computed_field,
-    model_validator,
+    model_validator
 )
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from typing_extensions import Self
@@ -68,6 +70,14 @@ class Settings(BaseSettings):
             "FIRST_SUPERUSER_PASSWORD", self.FIRST_SUPERUSER_PASSWORD
         )
 
+        return self
+    
+    GALLERY_ROOT: Path | None = None
+    @model_validator(mode="after")
+    def _check_gallery_root(self) -> Self:
+        if self.GALLERY_ROOT is None:
+            selected = askdirectory(title="Select Gallery Root Directory")
+            self.GALLERY_ROOT = Path(selected)
         return self
 
 
