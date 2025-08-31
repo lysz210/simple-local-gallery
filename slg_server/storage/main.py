@@ -33,3 +33,17 @@ def get_photos_in_folder(folder: Path) -> list[models.Photo]:
         folder = folder.relative_to(gallery_root)
     with get_session() as s:
         return s.query(models.Photo).filter(models.Photo.folder == str(folder)).all()
+
+def  tracks_summary():
+    with get_session() as s:
+        return s.query(
+            models.GpsTrack.uid,
+            models.GpsTrack.name,
+            func.count(models.GpsPoint.id).label('total_points'),
+            func.min(models.GpsPoint.timestamp).label('start_time'),
+            func.max(models.GpsPoint.timestamp).label('finish_time'),
+        ).join(
+            models.GpsPoint, models.GpsTrack.uid == models.GpsPoint.track_uid
+        ).group_by(
+            models.GpsTrack.uid
+        ).all()
