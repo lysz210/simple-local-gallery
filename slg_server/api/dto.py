@@ -20,6 +20,10 @@ class FolderSummary(BaseModel):
     folder: Path
     total_photos: int
 
+class FileSystemSummary(BaseModel):
+    folders: list[FolderSummary]
+    gpx_files_count: int
+
 class TrackSummary(BaseModel):
     uid: str
     name: str
