@@ -10,7 +10,7 @@ export default defineConfig({
       name: "@hey-api/sdk",
       // NOTE: this doesn't allow tree-shaking
       asClass: true,
-      operationId: false
+      operationId: true
     }
   ]
 })

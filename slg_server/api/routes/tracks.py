@@ -6,7 +6,7 @@ from ...storage.main import tracks_summary
 
 router = APIRouter(prefix="/tracks", tags=["tracks"])
 
-@router.get("/", name="Get Tracks summary")
+@router.get("/", name="Get Tracks summary", operation_id="get_tracks_summary")
 async def get_tracks_summary() -> list[TrackSummary]:
     summaries = tracks_summary()
     return [

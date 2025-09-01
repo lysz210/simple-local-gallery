@@ -7,12 +7,12 @@ from pathlib import Path
 
 router = APIRouter(prefix="/photos", tags=["photos"])
 
-@router.get("/", name="Get Photos summary")
+@router.get("/", name="Get Photos summary", operation_id="get_photos_summary")
 async def get_photos_summary() -> list[PhotoSummary]:
     summaries = photos_summary()
     return [PhotoSummary.model_validate(item._mapping) for item in summaries]
 
-@router.get("/folders", name="Get Photos folders")
+@router.get("/folders", name="Photos folders summary", operation_id="get_folders_summary")
 async def get_photos_folders() -> list[FolderSummary]:
 
     files_table = pd.DataFrame([{
@@ -27,7 +27,7 @@ async def get_photos_folders() -> list[FolderSummary]:
             .to_dict(orient='records')
     ]
 
-@router.get("/folder/{path:path}", name="Get Photos in folder")
+@router.get("/folder/{path:path}", name="Get Photos in folder", operation_id="get_folder_photos")
 async def get_photos_in_folder(path: str) -> list[Path]:
 
     folder_path = settings.GALLERY_ROOT / path
