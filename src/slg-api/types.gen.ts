@@ -94,7 +94,7 @@ export type GetPhotosSummaryData = {
     body?: never;
     path?: never;
     query?: never;
-    url: '/api/v1/photos/';
+    url: '/api/v1/photos';
 };
 
 export type GetPhotosSummaryResponses = {
@@ -155,6 +155,23 @@ export type GetFolderPhotosResponses = {
 
 export type GetFolderPhotosResponse = GetFolderPhotosResponses[keyof GetFolderPhotosResponses];
 
+export type GetGalleryRootData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/settings/gallery-root';
+};
+
+export type GetGalleryRootResponses = {
+    /**
+     * Response Get Gallery Root
+     * Successful Response
+     */
+    200: string;
+};
+
+export type GetGalleryRootResponse = GetGalleryRootResponses[keyof GetGalleryRootResponses];
+
 export type ResetGalleryRootData = {
     body?: never;
     path?: never;
@@ -176,7 +193,7 @@ export type GetTracksSummaryData = {
     body?: never;
     path?: never;
     query?: never;
-    url: '/api/v1/tracks/';
+    url: '/api/v1/tracks';
 };
 
 export type GetTracksSummaryResponses = {
