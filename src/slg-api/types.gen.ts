@@ -172,21 +172,21 @@ export type GetTracksSummaryResponses = {
 
 export type GetTracksSummaryResponse = GetTracksSummaryResponses[keyof GetTracksSummaryResponses];
 
-export type GetSummaryData = {
+export type GetFilesystemSummaryData = {
     body?: never;
     path?: never;
     query?: never;
     url: '/api/v1/fs';
 };
 
-export type GetSummaryResponses = {
+export type GetFilesystemSummaryResponses = {
     /**
      * Successful Response
      */
     200: FileSystemSummary;
 };
 
-export type GetSummaryResponse = GetSummaryResponses[keyof GetSummaryResponses];
+export type GetFilesystemSummaryResponse = GetFilesystemSummaryResponses[keyof GetFilesystemSummaryResponses];
 
 export type GetFolderPhotosData = {
     body?: never;

@@ -7,7 +7,7 @@ from ...core.config import settings
 
 router = APIRouter(prefix="/fs", tags=["filesystem"])
 
-@router.get("", name="SLG Filesystem summary", operation_id="get_summary")
+@router.get("", name="SLG Filesystem summary", operation_id="get_filesystem_summary")
 async def get_photos_folders() -> FileSystemSummary:
 
     files_table = pd.DataFrame([{

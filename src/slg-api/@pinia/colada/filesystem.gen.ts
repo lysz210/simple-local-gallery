@@ -2,7 +2,7 @@
 
 import { type Options, Filesystem } from '../../sdk.gen';
 import type { _JSONValue, UseQueryOptions } from '@pinia/colada';
-import type { GetSummaryData, GetSummaryResponse, GetFolderPhotosData, GetFolderPhotosError, GetFolderPhotosResponse } from '../../types.gen';
+import type { GetFilesystemSummaryData, GetFilesystemSummaryResponse, GetFolderPhotosData, GetFolderPhotosError, GetFolderPhotosResponse } from '../../types.gen';
 import type { AxiosError } from 'axios';
 import { client as _heyApiClient } from '../../client.gen';
 
@@ -40,18 +40,18 @@ const createQueryKey = <TOptions extends Options>(id: string, options?: TOptions
     ];
 };
 
-export const getSummaryQueryKey = (options?: Options<GetSummaryData>) => createQueryKey('getSummary', options, [
+export const getFilesystemSummaryQueryKey = (options?: Options<GetFilesystemSummaryData>) => createQueryKey('getFilesystemSummary', options, [
     'filesystem'
 ]);
 
 /**
  * Slg Filesystem Summary
  */
-export const getSummaryQuery = (options?: Options<GetSummaryData>): UseQueryOptions<GetSummaryResponse, AxiosError<Error>> => {
+export const getFilesystemSummaryQuery = (options?: Options<GetFilesystemSummaryData>): UseQueryOptions<GetFilesystemSummaryResponse, AxiosError<Error>> => {
     return {
-        key: getSummaryQueryKey(options),
+        key: getFilesystemSummaryQueryKey(options),
         query: async (context) => {
-            const { data } = await Filesystem.getSummary({
+            const { data } = await Filesystem.getFilesystemSummary({
                 ...options,
                 ...context,
                 throwOnError: true
