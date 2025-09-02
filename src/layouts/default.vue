@@ -8,7 +8,7 @@
     <v-app-bar-title>
       Simple Local Gallery:
       <v-btn density="compact" icon="mdi-home-edit" @click="resetGalleryRoot"></v-btn>
-      {{ galleryRoot ?? 'Not Set' }}
+      {{ galleryRoot?.data ?? 'Not Set' }}
     </v-app-bar-title>
   </v-app-bar>
 
@@ -22,19 +22,14 @@
 
 <script lang="ts" setup>
 import { PiniaColadaDevtools } from '@pinia/colada-devtools'
-import { Photos, Settings } from '@/slg-api';
+import { useMutation, useQuery, useQueryCache } from '@pinia/colada';
+import { getGalleryRootQuery, resetGalleryRootMutation } from '@/slg-api/@pinia/colada/settings.gen';
 
+const queryCache = useQueryCache()
 
-const galleryRoot: Ref<string|null> = ref('')
-
-Settings.getGalleryRoot().then(res => {
-  galleryRoot.value = res.data ?? null
+const { state: galleryRoot } = useQuery({...getGalleryRootQuery()})
+const { mutate: resetGalleryRoot } = useMutation({
+  ...resetGalleryRootMutation(),
+  onSettled: () => queryCache.invalidateQueries()
 })
-
-async function resetGalleryRoot() {
-  
-  const res = await Settings.resetGalleryRoot()
-  galleryRoot.value = res.data ?? null
-  window.location.reload()
-}
 </script>
