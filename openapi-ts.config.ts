@@ -11,6 +11,15 @@ export default defineConfig({
       // NOTE: this doesn't allow tree-shaking
       asClass: true,
       operationId: true
+    },
+    {
+      name: '@pinia/colada',
+      groupByTag: true,
+      queryOptions: true,
+      queryKeys: {
+        tags: true, 
+      },
+      mutationOptions: true,
     }
   ]
 })

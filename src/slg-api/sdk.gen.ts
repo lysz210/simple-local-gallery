@@ -70,7 +70,7 @@ export class Tracks {
 
 export class Filesystem {
     /**
-     * Photos Folders Summary
+     * Slg Filesystem Summary
      */
     public static getSummary<ThrowOnError extends boolean = false>(options?: Options<GetSummaryData, ThrowOnError>) {
         return (options?.client ?? _heyApiClient).get<GetSummaryResponses, unknown, ThrowOnError>({
@@ -81,7 +81,8 @@ export class Filesystem {
     }
     
     /**
-     * Get Photos In Folder
+     * Get Files In Folder
+     * Get list of photos or gpx files in a specific folder
      */
     public static getFolderPhotos<ThrowOnError extends boolean = false>(options: Options<GetFolderPhotosData, ThrowOnError>) {
         return (options.client ?? _heyApiClient).get<GetFolderPhotosResponses, GetFolderPhotosErrors, ThrowOnError>({

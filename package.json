@@ -15,6 +15,7 @@
   "dependencies": {
     "@fontsource/roboto": "5.2.6",
     "@mdi/font": "7.4.47",
+    "@pinia/colada": "^0.17.3",
     "axios": "^1.11.0",
     "pinia": "^3.0.3",
     "vue": "^3.5.17",
@@ -22,6 +23,7 @@
   },
   "devDependencies": {
     "@hey-api/openapi-ts": "^0.82.1",
+    "@pinia/colada-devtools": "^0.1.6",
     "@tsconfig/node22": "^22.0.0",
     "@types/node": "^22.9.0",
     "@vitejs/plugin-vue": "^5.2.3",
