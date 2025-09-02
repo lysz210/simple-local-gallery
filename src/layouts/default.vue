@@ -17,9 +17,11 @@
   <v-main class="d-flex align-center justify-center" height="300">
     <router-view />
   </v-main>
+  <PiniaColadaDevtools  />
 </template>
 
 <script lang="ts" setup>
+import { PiniaColadaDevtools } from '@pinia/colada-devtools'
 import { Photos, Settings } from '@/slg-api';
 
 
