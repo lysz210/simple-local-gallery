@@ -39,8 +39,10 @@
             prepend-icon="mdi-file-tree"
           ></v-list-item>
         </template>
-        <v-list-item v-if="fsSummaries.data?.gpx_files_count"
-        :title="`Found ${fsSummaries.data.gpx_files_count} GPX files`"
+        <v-list-item
+          v-if="fsSummaries.data?.gpx_files_count"
+          :title="`Found ${fsSummaries.data.gpx_files_count} GPX files`"
+          link to="/fs/gpx-files"
         ></v-list-item>
         <v-list-item
           v-for="summary in fsSummaries.data?.folders" :key="summary.folder"
