@@ -1,5 +1,6 @@
 from datetime import datetime
 from pathlib import Path
+from typing import Optional
 from pydantic import BaseModel
 
 class Photo(BaseModel):
@@ -23,6 +24,19 @@ class FolderSummary(BaseModel):
 class FileSystemSummary(BaseModel):
     folders: list[FolderSummary]
     gpx_files_count: int
+
+class Point(BaseModel):
+    latitude: float
+    longitude: float
+    elevation: Optional[float] = None
+    timestamp: datetime
+
+class Track(BaseModel):
+    uid: str
+    name: str
+    description: Optional[str] = None
+    timestamp: Optional[datetime] = None
+    points: Optional[list[Point]] = None
 
 class TrackSummary(BaseModel):
     uid: str

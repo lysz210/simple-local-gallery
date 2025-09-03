@@ -2,7 +2,7 @@
 
 import { type Options, Tracks } from '../../sdk.gen';
 import type { _JSONValue, UseQueryOptions } from '@pinia/colada';
-import type { GetTracksSummaryData, GetTracksSummaryResponse } from '../../types.gen';
+import type { GetTracksSummaryData, GetTracksSummaryResponse, InspectPgxFileData, InspectPgxFileError, InspectPgxFileResponse } from '../../types.gen';
 import type { AxiosError } from 'axios';
 import { client as _heyApiClient } from '../../client.gen';
 
@@ -52,6 +52,27 @@ export const getTracksSummaryQuery = (options?: Options<GetTracksSummaryData>): 
         key: getTracksSummaryQueryKey(options),
         query: async (context) => {
             const { data } = await Tracks.getTracksSummary({
+                ...options,
+                ...context,
+                throwOnError: true
+            });
+            return data;
+        }
+    };
+};
+
+export const inspectPgxFileQueryKey = (options: Options<InspectPgxFileData>) => createQueryKey('inspectPgxFile', options, [
+    'tracks'
+]);
+
+/**
+ * Inspect Gpx File
+ */
+export const inspectPgxFileQuery = (options: Options<InspectPgxFileData>): UseQueryOptions<InspectPgxFileResponse, AxiosError<InspectPgxFileError>> => {
+    return {
+        key: inspectPgxFileQueryKey(options),
+        query: async (context) => {
+            const { data } = await Tracks.inspectPgxFile({
                 ...options,
                 ...context,
                 throwOnError: true

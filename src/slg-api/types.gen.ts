@@ -61,6 +61,54 @@ export type PhotoSummary = {
 };
 
 /**
+ * Point
+ */
+export type Point = {
+    /**
+     * Latitude
+     */
+    latitude: number;
+    /**
+     * Longitude
+     */
+    longitude: number;
+    /**
+     * Elevation
+     */
+    elevation?: number | null;
+    /**
+     * Timestamp
+     */
+    timestamp: string;
+};
+
+/**
+ * Track
+ */
+export type Track = {
+    /**
+     * Uid
+     */
+    uid: string;
+    /**
+     * Name
+     */
+    name: string;
+    /**
+     * Description
+     */
+    description?: string | null;
+    /**
+     * Timestamp
+     */
+    timestamp?: string | null;
+    /**
+     * Points
+     */
+    points?: Array<Point> | null;
+};
+
+/**
  * TrackSummary
  */
 export type TrackSummary = {
@@ -171,6 +219,36 @@ export type GetTracksSummaryResponses = {
 };
 
 export type GetTracksSummaryResponse = GetTracksSummaryResponses[keyof GetTracksSummaryResponses];
+
+export type InspectPgxFileData = {
+    body?: never;
+    path: {
+        /**
+         * Gpx File
+         */
+        gpx_file: string;
+    };
+    query?: never;
+    url: '/api/v1/tracks/inspect/{gpx_file}';
+};
+
+export type InspectPgxFileErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type InspectPgxFileError = InspectPgxFileErrors[keyof InspectPgxFileErrors];
+
+export type InspectPgxFileResponses = {
+    /**
+     * Successful Response
+     */
+    200: Track;
+};
+
+export type InspectPgxFileResponse = InspectPgxFileResponses[keyof InspectPgxFileResponses];
 
 export type GetFilesystemSummaryData = {
     body?: never;
