@@ -188,7 +188,7 @@ export type GetFilesystemSummaryResponses = {
 
 export type GetFilesystemSummaryResponse = GetFilesystemSummaryResponses[keyof GetFilesystemSummaryResponses];
 
-export type GetFolderPhotosData = {
+export type FindPhotosData = {
     body?: never;
     path: {
         /**
@@ -197,27 +197,44 @@ export type GetFolderPhotosData = {
         path: string;
     };
     query?: never;
-    url: '/api/v1/fs/{path}';
+    url: '/api/v1/fs/photos/{path}';
 };
 
-export type GetFolderPhotosErrors = {
+export type FindPhotosErrors = {
     /**
      * Validation Error
      */
     422: HttpValidationError;
 };
 
-export type GetFolderPhotosError = GetFolderPhotosErrors[keyof GetFolderPhotosErrors];
+export type FindPhotosError = FindPhotosErrors[keyof FindPhotosErrors];
 
-export type GetFolderPhotosResponses = {
+export type FindPhotosResponses = {
     /**
-     * Response Get Folder Photos
+     * Response Find Photos
      * Successful Response
      */
     200: Array<string>;
 };
 
-export type GetFolderPhotosResponse = GetFolderPhotosResponses[keyof GetFolderPhotosResponses];
+export type FindPhotosResponse = FindPhotosResponses[keyof FindPhotosResponses];
+
+export type FindGpxFilesData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/fs/gpx';
+};
+
+export type FindGpxFilesResponses = {
+    /**
+     * Response Find Gpx Files
+     * Successful Response
+     */
+    200: Array<string>;
+};
+
+export type FindGpxFilesResponse = FindGpxFilesResponses[keyof FindGpxFilesResponses];
 
 export type ClientOptions = {
     baseURL: 'http://localhost:8000' | (string & {});

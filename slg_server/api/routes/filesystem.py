@@ -29,14 +29,24 @@ async def get_photos_folders() -> FileSystemSummary:
         gpx_files_count=gpx_files_count
     )
 
-@router.get("/{path:path}", name="Get Files in folder", operation_id="get_folder_photos")
+@router.get("/photos/{path:path}", name="Find Files in folder", operation_id="find_photos")
 async def get_photos_in_folder(path: str) -> list[Path]:
     '''
-    Get list of photos or gpx files in a specific folder
+    Find photos in a specific folder
     '''
     folder_path = settings.GALLERY_ROOT / path
     if not folder_path.exists() or not folder_path.is_dir():
         raise HTTPException(status_code=404, detail="Directory not found")
-    # FIXME: add gpx files
-    # FIXME: create a specific return type needed folder filename and mime type, basic file stats
-    return [photo for photo in folder_path.glob('*.jpg', case_sensitive=False) if photo.is_file()]
+    return [
+        photo for photo in folder_path.glob('*.jpg', case_sensitive=False) if photo.is_file()
+    ]
+
+@router.get("/gpx", name="Find GPX files", operation_id="find_gpx_files")
+async def get_gpx_files() -> list[Path]:
+    '''
+    Find GPX files in gallery root
+    '''
+    folder = settings.GALLERY_ROOT
+    return [
+        gpx.relative_to(folder) for gpx in folder.rglob('*.gpx', case_sensitive=False)
+    ]

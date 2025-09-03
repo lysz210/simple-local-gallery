@@ -2,7 +2,7 @@
 
 import { type Options, Filesystem } from '../../sdk.gen';
 import type { _JSONValue, UseQueryOptions } from '@pinia/colada';
-import type { GetFilesystemSummaryData, GetFilesystemSummaryResponse, GetFolderPhotosData, GetFolderPhotosError, GetFolderPhotosResponse } from '../../types.gen';
+import type { GetFilesystemSummaryData, GetFilesystemSummaryResponse, FindPhotosData, FindPhotosError, FindPhotosResponse, FindGpxFilesData, FindGpxFilesResponse } from '../../types.gen';
 import type { AxiosError } from 'axios';
 import { client as _heyApiClient } from '../../client.gen';
 
@@ -61,19 +61,41 @@ export const getFilesystemSummaryQuery = (options?: Options<GetFilesystemSummary
     };
 };
 
-export const getFolderPhotosQueryKey = (options: Options<GetFolderPhotosData>) => createQueryKey('getFolderPhotos', options, [
+export const findPhotosQueryKey = (options: Options<FindPhotosData>) => createQueryKey('findPhotos', options, [
     'filesystem'
 ]);
 
 /**
- * Get Files In Folder
- * Get list of photos or gpx files in a specific folder
+ * Find Files In Folder
+ * Find photos in a specific folder
  */
-export const getFolderPhotosQuery = (options: Options<GetFolderPhotosData>): UseQueryOptions<GetFolderPhotosResponse, AxiosError<GetFolderPhotosError>> => {
+export const findPhotosQuery = (options: Options<FindPhotosData>): UseQueryOptions<FindPhotosResponse, AxiosError<FindPhotosError>> => {
     return {
-        key: getFolderPhotosQueryKey(options),
+        key: findPhotosQueryKey(options),
         query: async (context) => {
-            const { data } = await Filesystem.getFolderPhotos({
+            const { data } = await Filesystem.findPhotos({
+                ...options,
+                ...context,
+                throwOnError: true
+            });
+            return data;
+        }
+    };
+};
+
+export const findGpxFilesQueryKey = (options?: Options<FindGpxFilesData>) => createQueryKey('findGpxFiles', options, [
+    'filesystem'
+]);
+
+/**
+ * Find Gpx Files
+ * Find GPX files in gallery root
+ */
+export const findGpxFilesQuery = (options?: Options<FindGpxFilesData>): UseQueryOptions<FindGpxFilesResponse, AxiosError<Error>> => {
+    return {
+        key: findGpxFilesQueryKey(options),
+        query: async (context) => {
+            const { data } = await Filesystem.findGpxFiles({
                 ...options,
                 ...context,
                 throwOnError: true
