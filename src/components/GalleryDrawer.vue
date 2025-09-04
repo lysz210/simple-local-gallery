@@ -48,6 +48,7 @@
           v-for="summary in fsSummaries.data?.folders" :key="summary.folder"
           :title="`${summary.folder}`"
           :subtitle="`with ${summary.total_photos} photos`"
+          link :to="`/fs/photos/${summary.folder}`"
         ></v-list-item>
       </v-list-group>
     </v-list>
