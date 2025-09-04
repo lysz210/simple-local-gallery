@@ -1,9 +1,4 @@
 <template>
-  <v-main>
-    
-  </v-main>
-
-  <AppFooter />
   <v-app-bar>
     <v-app-bar-title>
       Simple Local Gallery:
@@ -14,7 +9,7 @@
 
   <GalleryDrawer />
 
-  <v-main class="d-flex align-center justify-center" height="300">
+  <v-main class="d-flex align-start justify-center">
     <router-view />
   </v-main>
   <PiniaColadaDevtools  />
