@@ -14,34 +14,30 @@
 
 <script lang="ts" setup>
 import { findGpxFilesQuery } from '@/slg-api/@pinia/colada/filesystem.gen';
-import { getTracksSummaryQueryKey, inspectPgxFileQuery, inspectPgxFileQueryKey } from '@/slg-api/@pinia/colada/tracks.gen';
+import { inspectGpxFileQueryKey } from '@/slg-api/@pinia/colada/tracks.gen';
 import { Tracks, type Options } from '@/slg-api/sdk.gen';
-import type { InspectPgxFileData } from '@/slg-api/types.gen';
+import type { InspectGpxFileData } from '@/slg-api/types.gen';
 import { defineQueryOptions, useQuery } from '@pinia/colada';
 
 const selectedGpxFile = ref(null)
 
 const { state: gpxFiles } = useQuery({...findGpxFilesQuery()})
 
-const gpxInfoEnabled = computed(() => {
-    return selectedGpxFile.value !== null
-});
-
 const gpxInpectQuery = defineQueryOptions((gpx_file: string|null) => {
 
-    const options: Options<InspectPgxFileData> = {
+    const options: Options<InspectGpxFileData> = {
         path: {
             gpx_file: gpx_file ?? ''
         }
     }
 
     return {
-        key: inspectPgxFileQueryKey(options),
+        key: inspectGpxFileQueryKey(options),
         query: async (context) => {
             if (gpx_file === null) {
                 return null
             }
-            const { data } = await Tracks.inspectPgxFile({
+            const { data } = await Tracks.inspectGpxFile({
                 ...options,
                 ...context,
                 throwOnError: true

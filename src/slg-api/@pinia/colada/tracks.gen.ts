@@ -2,7 +2,7 @@
 
 import { type Options, Tracks } from '../../sdk.gen';
 import type { _JSONValue, UseQueryOptions } from '@pinia/colada';
-import type { GetTracksSummaryData, GetTracksSummaryResponse, InspectPgxFileData, InspectPgxFileError, InspectPgxFileResponse } from '../../types.gen';
+import type { GetTracksSummaryData, GetTracksSummaryResponse, InspectGpxFileData, InspectGpxFileError, InspectGpxFileResponse } from '../../types.gen';
 import type { AxiosError } from 'axios';
 import { client as _heyApiClient } from '../../client.gen';
 
@@ -61,18 +61,18 @@ export const getTracksSummaryQuery = (options?: Options<GetTracksSummaryData>): 
     };
 };
 
-export const inspectPgxFileQueryKey = (options: Options<InspectPgxFileData>) => createQueryKey('inspectPgxFile', options, [
+export const inspectGpxFileQueryKey = (options: Options<InspectGpxFileData>) => createQueryKey('inspectGpxFile', options, [
     'tracks'
 ]);
 
 /**
  * Inspect Gpx File
  */
-export const inspectPgxFileQuery = (options: Options<InspectPgxFileData>): UseQueryOptions<InspectPgxFileResponse, AxiosError<InspectPgxFileError>> => {
+export const inspectGpxFileQuery = (options: Options<InspectGpxFileData>): UseQueryOptions<InspectGpxFileResponse, AxiosError<InspectGpxFileError>> => {
     return {
-        key: inspectPgxFileQueryKey(options),
+        key: inspectGpxFileQueryKey(options),
         query: async (context) => {
-            const { data } = await Tracks.inspectPgxFile({
+            const { data } = await Tracks.inspectGpxFile({
                 ...options,
                 ...context,
                 throwOnError: true

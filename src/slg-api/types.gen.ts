@@ -220,7 +220,7 @@ export type GetTracksSummaryResponses = {
 
 export type GetTracksSummaryResponse = GetTracksSummaryResponses[keyof GetTracksSummaryResponses];
 
-export type InspectPgxFileData = {
+export type InspectGpxFileData = {
     body?: never;
     path: {
         /**
@@ -232,23 +232,23 @@ export type InspectPgxFileData = {
     url: '/api/v1/tracks/inspect/{gpx_file}';
 };
 
-export type InspectPgxFileErrors = {
+export type InspectGpxFileErrors = {
     /**
      * Validation Error
      */
     422: HttpValidationError;
 };
 
-export type InspectPgxFileError = InspectPgxFileErrors[keyof InspectPgxFileErrors];
+export type InspectGpxFileError = InspectGpxFileErrors[keyof InspectGpxFileErrors];
 
-export type InspectPgxFileResponses = {
+export type InspectGpxFileResponses = {
     /**
      * Successful Response
      */
     200: Track;
 };
 
-export type InspectPgxFileResponse = InspectPgxFileResponses[keyof InspectPgxFileResponses];
+export type InspectGpxFileResponse = InspectGpxFileResponses[keyof InspectGpxFileResponses];
 
 export type GetFilesystemSummaryData = {
     body?: never;
