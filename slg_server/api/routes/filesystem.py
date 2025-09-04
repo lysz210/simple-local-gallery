@@ -29,16 +29,17 @@ async def get_photos_folders() -> FileSystemSummary:
         gpx_files_count=gpx_files_count
     )
 
-@router.get("/photos/{path:path}", name="Find Files in folder", operation_id="find_photos")
-async def get_photos_in_folder(path: str) -> list[Path]:
+@router.get("/photos/{folder:path}", name="Find Files in folder", operation_id="find_photos")
+async def get_photos_in_folder(folder: str) -> list[Path]:
     '''
     Find photos in a specific folder
     '''
-    folder_path = settings.GALLERY_ROOT / path
+    root = settings.GALLERY_ROOT
+    folder_path = root / folder
     if not folder_path.exists() or not folder_path.is_dir():
         raise HTTPException(status_code=404, detail="Directory not found")
     return [
-        photo for photo in folder_path.glob('*.jpg', case_sensitive=False) if photo.is_file()
+        photo.relative_to(root) for photo in folder_path.glob('*.jpg', case_sensitive=False) if photo.is_file()
     ]
 
 @router.get("/gpx", name="Find GPX files", operation_id="find_gpx_files")

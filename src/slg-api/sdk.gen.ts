@@ -98,7 +98,7 @@ export class Filesystem {
     public static findPhotos<ThrowOnError extends boolean = false>(options: Options<FindPhotosData, ThrowOnError>) {
         return (options.client ?? _heyApiClient).get<FindPhotosResponses, FindPhotosErrors, ThrowOnError>({
             responseType: 'json',
-            url: '/api/v1/fs/photos/{path}',
+            url: '/api/v1/fs/photos/{folder}',
             ...options
         });
     }

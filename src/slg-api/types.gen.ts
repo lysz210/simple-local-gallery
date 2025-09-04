@@ -270,12 +270,12 @@ export type FindPhotosData = {
     body?: never;
     path: {
         /**
-         * Path
+         * Folder
          */
-        path: string;
+        folder: string;
     };
     query?: never;
-    url: '/api/v1/fs/photos/{path}';
+    url: '/api/v1/fs/photos/{folder}';
 };
 
 export type FindPhotosErrors = {
