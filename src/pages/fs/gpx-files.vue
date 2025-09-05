@@ -6,9 +6,9 @@
             v-model="selectedGpxFile"
         ></v-autocomplete>
         <p>{{ selectedGpxFile }}</p>
-        <p>{{ gpxData.data?.uid }}  {{ gpxData.data?.name }}</p>
-        <p>{{ gpxData.data?.timestamp }}</p>
-        <p>{{ gpxData.data?.points?.length }}</p>
+        <p>{{ gpxData?.uid }}  {{ gpxData?.name }}</p>
+        <p>{{ gpxData?.timestamp }}</p>
+        <p>{{ gpxData?.points?.length }}</p>
     </v-container>
 </template>
 
@@ -18,6 +18,8 @@ import { inspectGpxFileQueryKey } from '@/slg-api/@pinia/colada/tracks.gen';
 import { Tracks, type Options } from '@/slg-api/sdk.gen';
 import type { InspectGpxFileData } from '@/slg-api/types.gen';
 import { defineQueryOptions, useQuery } from '@pinia/colada';
+
+const router = useRouter()
 
 const selectedGpxFile = ref(null)
 
@@ -47,5 +49,11 @@ const gpxInpectQuery = defineQueryOptions((gpx_file: string|null) => {
     };
 })
 
-const { state: gpxData } = useQuery(gpxInpectQuery, () => selectedGpxFile.value)
+const { data: gpxData, error: gpxError } = useQuery(gpxInpectQuery, () => selectedGpxFile.value)
+watch(gpxError, async (newError) => {
+    if (newError) {
+        console.error(newError)
+        router.push("/")
+    }
+})
 </script>
