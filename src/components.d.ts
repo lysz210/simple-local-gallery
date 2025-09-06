@@ -11,5 +11,6 @@ declare module 'vue' {
     GalleryDrawer: typeof import('./components/GalleryDrawer.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    TrackMap: typeof import('./components/TrackMap.vue')['default']
   }
 }

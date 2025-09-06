@@ -9,10 +9,12 @@
         <p>{{ gpxData?.uid }}  {{ gpxData?.name }}</p>
         <p>{{ gpxData?.timestamp }}</p>
         <p>{{ gpxData?.points?.length }}</p>
+        <TrackMap :gpxData="gpxData" v-if="!gpxError && gpxData"></TrackMap>
     </v-container>
 </template>
 
 <script lang="ts" setup>
+import TrackMap from '@/components/TrackMap.vue';
 import { findGpxFilesQuery } from '@/slg-api/@pinia/colada/filesystem.gen';
 import { inspectGpxFileQueryKey } from '@/slg-api/@pinia/colada/tracks.gen';
 import { Tracks, type Options } from '@/slg-api/sdk.gen';
