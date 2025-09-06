@@ -5,7 +5,6 @@
             :items="gpxFiles.data"
             v-model="selectedGpxFile"
         ></v-autocomplete>
-        <p>{{ selectedGpxFile }}</p>
         <p>{{ gpxData?.uid }}  {{ gpxData?.name }}</p>
         <p>{{ gpxData?.timestamp }}</p>
         <p>{{ gpxData?.points?.length }}</p>

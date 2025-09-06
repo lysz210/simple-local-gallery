@@ -8,21 +8,44 @@
         :no-wrap="true"
         :attribution="attribution"
       ></l-tile-layer>
+      <l-geo-json :geojson="geoJson" v-if="geoJson"></l-geo-json>
+      <l-marker :lat-lng="center"></l-marker>
     </l-map>
   </v-sheet>
 </template>
 
 <script setup lang="ts">
-import { LMap, LTileLayer } from '@vue-leaflet/vue-leaflet'
+import { LGeoJson, LMap, LMarker, LTileLayer } from '@vue-leaflet/vue-leaflet'
+import { type FeatureCollection, type Position } from 'geojson'
 import { type Track } from '@/slg-api/types.gen'
-import { type PointExpression } from 'leaflet';
+import { type PointTuple } from 'leaflet';
 
+const attribution=`&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors`
 const { gpxData } = defineProps<{ gpxData: Track }>()
-const zoom = 10
-const center = computed<PointExpression>(() => {
+const zoom = 15
+const center = computed<PointTuple>(() => {
     return (gpxData && gpxData.points)
         ? [gpxData.points[0].latitude, gpxData.points[0].longitude]
-        : [47.41322, -1.219482]
+        : [45.457753365520205, 12.301083000000004]
 })
-const attribution=`&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors`
+
+
+const geoJson = computed<FeatureCollection>(() => {
+  const linePoints: Position[] = gpxData.points?.map(point => [point.longitude, point.latitude]) ?? []
+  console.log(linePoints)
+  return {
+    type: "FeatureCollection",
+    features: [{
+      type: "Feature",
+      geometry: {
+          "type": "LineString", 
+          "coordinates": linePoints
+      },
+      properties: {
+        name: gpxData.name
+      }
+    }]
+  }
+})
+
 </script>
