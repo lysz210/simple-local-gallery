@@ -15,7 +15,7 @@ def from_gpx_point(other: GPXTrackPoint) -> 'Point':
         elevation=other.elevation
     )
 
-def inspect_gpx(gpx_file: Path) -> Track:
+def inspect_gpx(gpx_file: Path, with_bounds: bool = True) -> Track:
     with gpx_file.open('r') as gpx_file:
         doc = gpxpy.parse(gpx_file)
         track_uid = doc.link.rsplit('-', 1)[-1]
@@ -27,25 +27,27 @@ def inspect_gpx(gpx_file: Path) -> Track:
                 for gpx_point in segment.points
     ]
 
-    pointsTable = pd.DataFrame([p.model_dump() for p in points])
-
-    min_max = {
-        'timestamp_min': pointsTable['timestamp'].min(),
-        'timestamp_max': pointsTable['timestamp'].max(),
-        'latitude_min': pointsTable['latitude'].min(),
-        'latitude_max': pointsTable['latitude'].max(),
-        'longitude_min': pointsTable['longitude'].min(),
-        'longitude_max': pointsTable['longitude'].max(),
-        'elevation_min': pointsTable['elevation'].min(),
-        'elevation_max': pointsTable['elevation'].max(),
-    }
-
-    return Track(
+    track = Track(
         uid=track_uid,
         name=doc.name,
         timestamp=doc.time.astimezone(timezone.utc),
         points=points,
-        bounds=Bounds(
+    )
+
+    if (with_bounds):
+        pointsTable = pd.DataFrame([p.model_dump() for p in points])
+
+        min_max = {
+            'timestamp_min': pointsTable['timestamp'].min(),
+            'timestamp_max': pointsTable['timestamp'].max(),
+            'latitude_min': pointsTable['latitude'].min(),
+            'latitude_max': pointsTable['latitude'].max(),
+            'longitude_min': pointsTable['longitude'].min(),
+            'longitude_max': pointsTable['longitude'].max(),
+            'elevation_min': pointsTable['elevation'].min(),
+            'elevation_max': pointsTable['elevation'].max(),
+        }
+        track.bounds=Bounds(
             min=Point(
                 latitude=min_max['latitude_min'],
                 longitude=min_max['longitude_min'],
@@ -60,4 +62,5 @@ def inspect_gpx(gpx_file: Path) -> Track:
                 timestamp=min_max['timestamp_max']
             ),
         )
-    )
+    
+    return track
