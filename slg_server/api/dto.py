@@ -31,10 +31,15 @@ class Point(BaseModel):
     elevation: Optional[float] = None
     timestamp: datetime
 
+class Bounds(BaseModel):
+    min: Point
+    max: Point
+
 class Track(BaseModel):
     uid: str
     name: str
     description: Optional[str] = None
+    bounds: Optional[Bounds] = None
     timestamp: Optional[datetime] = None
     points: Optional[list[Point]] = None
 
