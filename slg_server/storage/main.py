@@ -8,6 +8,7 @@ from sqlalchemy.orm import sessionmaker
 from ..core.config import settings
 
 from . import models
+from ..api import dto
 
 def get_session():
 
@@ -47,3 +48,13 @@ def  tracks_summary():
         ).group_by(
             models.GpsTrack.uid
         ).all()
+
+def save_track(track: dto.Track) -> None:
+    new_track = models.GpsTrack(
+        **track.model_dump(exclude=('bounds', 'points')),
+        points=[models.GpsPoint(**point.model_dump()) for point in track.points] if track.points else None
+    )
+    with get_session() as s:
+        s.add(new_track)
+        s.commit()
+        return new_track.uid

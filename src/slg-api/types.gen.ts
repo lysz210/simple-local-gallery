@@ -259,6 +259,37 @@ export type InspectGpxFileResponses = {
 
 export type InspectGpxFileResponse = InspectGpxFileResponses[keyof InspectGpxFileResponses];
 
+export type ImportPgxFileData = {
+    body?: never;
+    path: {
+        /**
+         * Gpx File
+         */
+        gpx_file: string;
+    };
+    query?: never;
+    url: '/api/v1/tracks/import/{gpx_file}';
+};
+
+export type ImportPgxFileErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ImportPgxFileError = ImportPgxFileErrors[keyof ImportPgxFileErrors];
+
+export type ImportPgxFileResponses = {
+    /**
+     * Response Import Pgx File
+     * Successful Response
+     */
+    200: string;
+};
+
+export type ImportPgxFileResponse = ImportPgxFileResponses[keyof ImportPgxFileResponses];
+
 export type GetFilesystemSummaryData = {
     body?: never;
     path?: never;

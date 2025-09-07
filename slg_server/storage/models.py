@@ -30,6 +30,7 @@ class Photo(Base):
     gps_point_id: Mapped[Optional[int]] = mapped_column(ForeignKey("points.id"))
     gps_point: Mapped[Optional["GpsPoint"]] = relationship(back_populates="photos")
 
+
 class GpsTrack(Base):
     __tablename__ = "tracks"
 
@@ -44,10 +45,10 @@ class GpsPoint(Base):
     __tablename__ = "points"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    latitude: Mapped[float] = mapped_column()
-    longitude: Mapped[float] = mapped_column()
-    elevation: Mapped[Optional[float]] = mapped_column()
-    timestamp: Mapped[datetime] = mapped_column(DateTime(timezone=False), server_default=func.datetime('now'))
+    latitude: Mapped[float] = mapped_column(index=True)
+    longitude: Mapped[float] = mapped_column(index=True)
+    elevation: Mapped[Optional[float]] = mapped_column(index=True)
+    timestamp: Mapped[datetime] = mapped_column(DateTime(timezone=False), server_default=func.datetime('now'), index=True)
 
     track_uid: Mapped[Optional[str]] = mapped_column(ForeignKey("tracks.uid"))
     track: Mapped[Optional["GpsTrack"]] = relationship(back_populates="points")
