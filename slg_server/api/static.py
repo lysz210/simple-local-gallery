@@ -1,5 +1,5 @@
 from pathlib import Path
-from starlette.exceptions import HTTPException
+from fastapi import HTTPException
 from starlette.responses import FileResponse
 from starlette.types import Receive, Scope, Send
 
