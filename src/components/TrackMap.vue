@@ -18,10 +18,13 @@
 import { LGeoJson, LMap, LMarker, LTileLayer } from '@vue-leaflet/vue-leaflet'
 import { type FeatureCollection, type Position } from 'geojson'
 import { type Track } from '@/slg-api/types.gen'
-import { type PointTuple } from 'leaflet';
+import { latLng, latLngBounds, type PointTuple } from 'leaflet';
+import type { TemplateRef } from 'vue';
 
 const attribution=`&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors`
+const mapRef = useTemplateRef('map')
 const { gpxData } = defineProps<{ gpxData: Track }>()
+
 const zoom = 15
 const center = computed<PointTuple>(() => {
     return (gpxData && gpxData.points)
@@ -48,4 +51,14 @@ const geoJson = computed<FeatureCollection>(() => {
   }
 })
 
+watchEffect(async () => {
+  if (!gpxData.bounds || !mapRef.value?.leafletObject) {
+    return
+  }
+  console.log('mounted', mapRef.value)
+  const {min, max} = gpxData.bounds
+  const map = mapRef.value.leafletObject
+  console.log(map)
+  map.fitBounds(latLngBounds(latLng({'lat': min.latitude, 'lng': min.longitude}), latLng({'lat': max.latitude, 'lng': max.longitude})))
+})
 </script>
