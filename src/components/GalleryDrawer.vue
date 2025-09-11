@@ -58,10 +58,10 @@
 <script lang="ts" setup>
 import { getFilesystemSummaryQuery } from '@/slg-api/@pinia/colada/filesystem.gen';
 import { getPhotosSummaryQuery } from '@/slg-api/@pinia/colada/photos.gen';
-import { getTracksSummaryQuery } from '@/slg-api/@pinia/colada/tracks.gen';
+import { useTraksSummaries } from '@/stores/traks';
 import { useQuery } from '@pinia/colada';
 
 const { state: photosSummaries } = useQuery({...getPhotosSummaryQuery()})
-const { state: tracksSummaries } = useQuery({...getTracksSummaryQuery()})
+const { state: tracksSummaries } = useTraksSummaries()
 const { state: fsSummaries } = useQuery({...getFilesystemSummaryQuery()})
 </script>
