@@ -133,14 +133,7 @@ export type TrackSummary = {
      * Total Points
      */
     total_points: number;
-    /**
-     * Start Time
-     */
-    start_time: string;
-    /**
-     * Finish Time
-     */
-    finish_time: string;
+    bounds?: Bounds | null;
 };
 
 /**

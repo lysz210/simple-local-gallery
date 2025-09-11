@@ -1,9 +1,10 @@
+import json
 from pathlib import Path
 from sqlalchemy.sql import (
     func
 )
 
-from sqlalchemy import create_engine
+from sqlalchemy import JSON, create_engine, type_coerce
 from sqlalchemy.orm import sessionmaker
 from ..core.config import settings
 
@@ -35,19 +36,39 @@ def get_photos_in_folder(folder: Path) -> list[models.Photo]:
     with get_session() as s:
         return s.query(models.Photo).filter(models.Photo.folder == str(folder)).all()
 
-def  tracks_summary():
+def  tracks_summary() -> list[dto.TrackSummary]:
     with get_session() as s:
-        return s.query(
+        results = s.query(
             models.GpsTrack.uid,
             models.GpsTrack.name,
             func.count(models.GpsPoint.id).label('total_points'),
-            func.min(models.GpsPoint.timestamp).label('start_time'),
-            func.max(models.GpsPoint.timestamp).label('finish_time'),
+            func.json_object(
+                'min', func.json_object(
+                    'latitude', func.min(models.GpsPoint.latitude),
+                    'longitude', func.min(models.GpsPoint.longitude),
+                    'elevation', func.min(models.GpsPoint.elevation),
+                    'timestamp', func.min(models.GpsPoint.timestamp),
+                ),
+                'max', func.json_object(
+                    'latitude', func.max(models.GpsPoint.latitude),
+                    'longitude', func.max(models.GpsPoint.longitude),
+                    'elevation', func.max(models.GpsPoint.elevation),
+                    'timestamp', func.max(models.GpsPoint.timestamp),
+                ),
+            ).label('bounds')
         ).join(
             models.GpsPoint, models.GpsTrack.uid == models.GpsPoint.track_uid
         ).group_by(
             models.GpsTrack.uid
         ).all()
+
+        summaries = []
+        for item in results:
+            mapping = dict(item._mapping)
+            if mapping['bounds']:
+                mapping['bounds'] = json.loads(mapping['bounds'])
+            summaries.append(dto.TrackSummary.model_validate(mapping))
+        return summaries
 
 def save_track(track: dto.Track) -> None:
     new_track = models.GpsTrack(

@@ -10,12 +10,7 @@ router = APIRouter(prefix="/tracks", tags=["tracks"])
 
 @router.get("", name="Get Tracks summary", operation_id="get_tracks_summary")
 async def get_tracks_summary() -> list[TrackSummary]:
-    summaries = tracks_summary()
-    return [
-        TrackSummary.model_validate(item._mapping)
-        for item in summaries
-    ]
-
+    return tracks_summary()
 
 @router.get("/inspect/{gpx_file:path}", name="Inspect gpx file", operation_id="inspect_gpx_file")
 async def inspec_gpx(gpx_file: str) -> Track:
