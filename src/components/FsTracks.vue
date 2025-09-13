@@ -24,7 +24,7 @@ import { findGpxFilesQuery } from '@/slg-api/@pinia/colada/filesystem.gen';
 import { inspectGpxFileQueryKey } from '@/slg-api/@pinia/colada/tracks.gen';
 import { Tracks, type Options } from '@/slg-api/sdk.gen';
 import type { InspectGpxFileData } from '@/slg-api/types.gen';
-import { defineQueryOptions, useQuery, useQueryCache } from '@pinia/colada';
+import { useQuery, useQueryCache } from '@pinia/colada';
 
 const router = useRouter()
 const queryCache = useQueryCache()
@@ -33,7 +33,9 @@ const selectedGpxFile = ref(null)
 
 const { state: gpxFiles } = useQuery({...findGpxFilesQuery()})
 
-const gpxInpectQuery = defineQueryOptions((gpx_file: string|null) => {
+const { data: gpxData, error: gpxError } = useQuery(() => {
+
+    const gpx_file = selectedGpxFile.value
 
     const options: Options<InspectGpxFileData> = {
         path: {
@@ -56,8 +58,6 @@ const gpxInpectQuery = defineQueryOptions((gpx_file: string|null) => {
         }
     };
 })
-
-const { data: gpxData, error: gpxError } = useQuery(gpxInpectQuery, () => selectedGpxFile.value)
 
 async function importGpx(gpxFile: string) {
     try {

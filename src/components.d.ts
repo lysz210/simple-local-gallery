@@ -8,7 +8,10 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
-    GalleryDrawer: typeof import('./components/GalleryDrawer.vue')['default']
+    '[[folder]]+': typeof import('./components/[[folder]]+.vue')['default']
+    FsPhotos: typeof import('./components/FsPhotos.vue')['default']
+    FsTracks: typeof import('./components/FsTracks.vue')['default']
+    GalleryDrawerContent: typeof import('./components/GalleryDrawerContent.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     TrackMap: typeof import('./components/TrackMap.vue')['default']

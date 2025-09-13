@@ -1,6 +1,15 @@
 <template>
 <v-container>
     <v-row>
+        <v-col cols="12">
+            <v-autocomplete
+                label="Select"
+                :items="folders"
+                v-model="selectedFolder"
+            ></v-autocomplete>
+        </v-col>
+    </v-row>
+    <v-row>
         <v-col
         v-for="photo in photos" :key="photo"
         class="d-flex child-flex"
@@ -30,19 +39,21 @@
 </v-container>
 </template>
 <script lang="ts" setup>
-import { findPhotosQueryKey } from '@/slg-api/@pinia/colada/filesystem.gen';
+import { findPhotosQueryKey, getFilesystemSummaryQuery } from '@/slg-api/@pinia/colada/filesystem.gen';
 import { Filesystem, type Options } from '@/slg-api/sdk.gen';
 import type { FindPhotosData } from '@/slg-api/types.gen';
-import { defineQueryOptions, useQuery } from '@pinia/colada';
+import { useQuery } from '@pinia/colada';
 
-const route = useRoute()
 const router = useRouter()
 
-const { data: photos, error: photosError } = useQuery(
-    defineQueryOptions((folder: string) => {
+const { data: fsSummaries } = useQuery({...getFilesystemSummaryQuery()})
+const folders = computed(() => fsSummaries.value?.folders?.map(f => f.folder) ?? [])
+const selectedFolder = ref<string | null>(null)
+
+const { data: photos, error: photosError } = useQuery(() => {
         const options: Options<FindPhotosData> = {
             path: {
-                folder
+                folder: selectedFolder.value ?? ''
             }
         }
         return {
@@ -54,11 +65,10 @@ const { data: photos, error: photosError } = useQuery(
                     throwOnError: true
                 })
                 return data
-            }
+            },
+            enabled: !!selectedFolder.value
         }
-    }),
-    () => route.params.folder.join('/')
-)
+})
 
 watch(photosError, async (newError) => {
     if (newError) {
