@@ -42,15 +42,26 @@
       link to="/fs"
     ></v-list-item>
   </v-list>
+
+  <v-container v-for="(photos, folder) in fsStore.selectedPhotos" :key="folder">
+    <v-row><v-col>
+      <v-img
+        v-for="photo in photos" :key="photo"
+        :src="`http://localhost:8000/static-photos/${photo}`"
+        @click="removeSelectedPhoto(folder, photo)"
+      ></v-img>
+    </v-col></v-row>
+  </v-container>
 </template>
 
 <script lang="ts" setup>
-import { getFilesystemSummaryQuery } from '@/slg-api/@pinia/colada/filesystem.gen';
 import { getPhotosSummaryQuery } from '@/slg-api/@pinia/colada/photos.gen';
+import { useFsStore } from '@/stores/fs';
 import { useTraksSummaries } from '@/stores/traks';
 import { useQuery } from '@pinia/colada';
 
 const { state: photosSummaries } = useQuery({...getPhotosSummaryQuery()})
 const { state: tracksSummaries } = useTraksSummaries()
-const { state: fsSummaries } = useQuery({...getFilesystemSummaryQuery()})
+const fsStore = useFsStore()
+const { removeSelectedPhoto } = fsStore
 </script>
