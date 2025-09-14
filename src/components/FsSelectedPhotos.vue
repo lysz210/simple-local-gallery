@@ -27,11 +27,24 @@
 </template>
 
 <script lang="ts" setup>
+import { Photos } from '@/slg-api/sdk.gen';
 import { useFsStore } from '@/stores/fs';
 
 const fsStore = useFsStore()
 
 const importPhotos = async () => {
-
+    const selectedPhotos = Object.values(fsStore.selectedPhotos).flat()
+    console.log('Importing photos:', selectedPhotos)
+    if (selectedPhotos.length === 0) {
+        return;
+    }
+    try {
+        const { data: response} = await Photos.importPhotos({
+            body: selectedPhotos
+        })
+        console.log('Import response:', response)
+    } catch (error) {
+        console.error('Error importing photos:', error)
+    }
 }
 </script>
