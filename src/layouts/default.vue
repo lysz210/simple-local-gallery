@@ -26,7 +26,7 @@
     >
       <img
         v-for="photo in photos" :key="photo"
-        :src="`http://localhost:8000/static-photos/${photo}`"
+        :src="`http://localhost:8000/thumbnails/${photo}`"
         height="180px"
         @click="removeSelectedPhoto(folder, photo)"
       ></img>

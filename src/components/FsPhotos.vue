@@ -24,7 +24,7 @@
                     :value="photo"
                 >
                     <v-img
-                        :src="`http://localhost:8000/static-photos/${photo}`"
+                        :src="`http://localhost:8000/thumbnails/${photo}`"
                         aspect-ratio="1"
                         class="bg-grey-lighten-2"
                         @click="toggle"
