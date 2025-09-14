@@ -378,6 +378,20 @@ export type FindGpxFilesResponses = {
 
 export type FindGpxFilesResponse = FindGpxFilesResponses[keyof FindGpxFilesResponses];
 
+export type ClearThumbnailsCacheData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/fsthumbnails';
+};
+
+export type ClearThumbnailsCacheResponses = {
+    /**
+     * Successful Response
+     */
+    200: unknown;
+};
+
 export type ClientOptions = {
     baseURL: 'http://localhost:8000' | (string & {});
 };

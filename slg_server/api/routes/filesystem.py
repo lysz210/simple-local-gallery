@@ -11,9 +11,10 @@ router = APIRouter(prefix="/fs", tags=["filesystem"])
 async def get_photos_folders() -> FileSystemSummary:
 
     files_table = pd.DataFrame([{
-        "folder": folder.parent.relative_to(settings.GALLERY_ROOT),
-        "filename": folder.name
-    } for folder in settings.GALLERY_ROOT.rglob('*.jpg', case_sensitive=False)])
+        "folder": photo.parent.relative_to(settings.GALLERY_ROOT),
+        "filename": photo.name
+    } for photo in settings.GALLERY_ROOT.rglob('*.jpg', case_sensitive=False)
+      if not any(part.startswith('.') for part in photo.relative_to(settings.GALLERY_ROOT).parts)])
 
     folders_summaries = [
         FolderSummary.model_validate(item)
@@ -51,3 +52,22 @@ async def get_gpx_files() -> list[Path]:
     return [
         gpx.relative_to(folder) for gpx in folder.rglob('*.gpx', case_sensitive=False)
     ]
+
+@router.delete("thumbnails", name="Clear Thumbnails cache", operation_id="clear_thumbnails_cache")
+async def clear_thumbnails_cache() -> None:
+    '''
+    Clear all thumbnails cache
+    '''
+    thumbnail_root = settings.thumbnails_root
+    if not thumbnail_root.exists() or not thumbnail_root.is_dir():
+        raise HTTPException(status_code=404, detail="Thumbnails directory not found")
+    folders = []
+    for thumb in thumbnail_root.rglob('*'):
+        if thumb.is_dir():
+            folders.append(thumb)
+        else:
+            thumb.unlink()
+            print(f"Deleting File {thumb}")
+    for folder in sorted(folders, reverse=True):
+        folder.rmdir()
+        print(f"Deleting Folder {folder}")

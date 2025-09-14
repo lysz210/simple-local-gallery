@@ -96,6 +96,13 @@ class Settings(BaseSettings):
     def sqlite_dsn(self) -> Path:
         sqlite_path = self.GALLERY_ROOT / "photos.db"
         return f"sqlite:///{sqlite_path}"
+    
+    @computed_field  # type: ignore[prop-decorator]
+    @property
+    def thumbnails_root(self) -> Path:
+        thumb_root = self.GALLERY_ROOT / ".thumbnails"
+        thumb_root.mkdir(exist_ok=True)
+        return thumb_root
 
 
 settings = Settings()  # type: ignore
