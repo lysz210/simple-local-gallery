@@ -1,5 +1,6 @@
 export const useFsStore = defineStore('fs', {
   state: () => ({
+    previewSelecetedPhotos: false,
     selectedPhotos: {} as Record<string, string[]>,
   }),
   actions: {

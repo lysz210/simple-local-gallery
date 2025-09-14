@@ -10,6 +10,7 @@ declare module 'vue' {
   export interface GlobalComponents {
     '[[folder]]+': typeof import('./components/[[folder]]+.vue')['default']
     FsPhotos: typeof import('./components/FsPhotos.vue')['default']
+    FsSelectedPhotos: typeof import('./components/FsSelectedPhotos.vue')['default']
     FsTracks: typeof import('./components/FsTracks.vue')['default']
     GalleryDrawerContent: typeof import('./components/GalleryDrawerContent.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']

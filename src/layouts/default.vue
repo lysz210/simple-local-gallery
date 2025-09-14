@@ -19,6 +19,7 @@
   <v-footer
     app
     class="overflow-x-auto ga-2"
+    v-if="fsStore.previewSelecetedPhotos"
   >
     <template
       v-for="(photos, folder) in fsStore.selectedPhotos" :key="folder"
