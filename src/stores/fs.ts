@@ -1,5 +1,3 @@
-import { de } from "vuetify/locale";
-
 export const useFsStore = defineStore('fs', {
   state: () => ({
     selectedPhotos: {} as Record<string, string[]>,
