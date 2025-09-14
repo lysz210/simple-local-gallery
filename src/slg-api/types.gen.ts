@@ -171,6 +171,37 @@ export type GetPhotosSummaryResponses = {
 
 export type GetPhotosSummaryResponse = GetPhotosSummaryResponses[keyof GetPhotosSummaryResponses];
 
+export type ImportPhotosData = {
+    /**
+     * Photos
+     */
+    body: Array<string>;
+    path?: never;
+    query?: never;
+    url: '/api/v1/photos/import';
+};
+
+export type ImportPhotosErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ImportPhotosError = ImportPhotosErrors[keyof ImportPhotosErrors];
+
+export type ImportPhotosResponses = {
+    /**
+     * Response Import Photos
+     * Successful Response
+     */
+    200: {
+        [key: string]: number;
+    };
+};
+
+export type ImportPhotosResponse = ImportPhotosResponses[keyof ImportPhotosResponses];
+
 export type GetGalleryRootData = {
     body?: never;
     path?: never;
