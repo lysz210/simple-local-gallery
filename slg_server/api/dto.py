@@ -8,8 +8,8 @@ class Photo(BaseModel):
     folder: str
     filename: str
     description: str
-    original_created_at: str
-    gps_point_id: int | None
+    gps_point_id: Optional[int] = None
+    original_created_at: datetime
 
 class PhotoSummary(BaseModel):
     folder: str
@@ -48,3 +48,6 @@ class TrackSummary(BaseModel):
     name: str
     total_points: int
     bounds: Optional[Bounds] = None
+
+class FilterPhotos(BaseModel):
+    folder: Optional[Path] = None

@@ -1,5 +1,6 @@
 import json
 from pathlib import Path
+from typing import Optional
 from sqlalchemy.sql import (
     func
 )
@@ -26,15 +27,35 @@ def photos_summary():
             func.max(models.Photo.original_created_at).label('last_taken_at'),
         ).group_by(models.Photo.folder).all()
 
-def get_photos_in_folder(folder: Path) -> list[models.Photo]:
+def search_photos(filter: dto.FilterPhotos) -> list[dto.Photo]:
     gallery_root = settings.GALLERY_ROOT
+    folder = filter.folder
     if isinstance(folder, str):
         folder = Path(folder)
     
-    if folder.is_absolute():
-        folder = folder.relative_to(gallery_root)
     with get_session() as s:
-        return s.query(models.Photo).filter(models.Photo.folder == str(folder)).all()
+        query = s.query(models.Photo)
+        if folder:
+            if folder.is_absolute():
+                folder = folder.relative_to(gallery_root)
+            query = query.filter(models.Photo.folder == str(folder))
+        photos = query.all()
+        return [
+            dto.Photo.model_validate(
+                photo,
+                from_attributes=True,
+                strict=False
+            )
+            for photo in photos
+        ]
+def find_photo_by_id(id: int) -> Optional[dto.Photo]:
+    with get_session() as s:
+        photo = s.query(models.Photo).filter(models.Photo.id == id).first()
+        return dto.Photo.model_validate(
+            photo,
+            from_attributes=True,
+            strict=False
+        ) if photo else None
 
 def save_photos(photos_paths: list[Path]) -> dict[str, int]:
     photos = [models.Photo(
