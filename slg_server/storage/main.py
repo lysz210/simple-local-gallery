@@ -1,9 +1,13 @@
+from datetime import datetime, timezone
 import json
 from pathlib import Path
 from typing import Optional
+from zoneinfo import ZoneInfo
+import piexif
 from sqlalchemy.sql import (
     func
 )
+from PIL import Image
 
 from sqlalchemy import JSON, create_engine, type_coerce
 from sqlalchemy.orm import sessionmaker
@@ -58,12 +62,31 @@ def find_photo_by_id(id: int) -> Optional[dto.Photo]:
         ) if photo else None
 
 def save_photos(photos_paths: list[Path]) -> dict[str, int]:
-    photos = [models.Photo(
-        folder=photo_path.parent.as_posix(),
-        filename=photo_path.name,
-        description=photo_path.name,
-        original_created_at=func.datetime('now') # Placeholder, should extract from EXIF
-    ) for photo_path in photos_paths]
+    europe_rome = ZoneInfo('Europe/Rome')
+    gallery_root = settings.GALLERY_ROOT
+    photos = []
+    for photo_path in photos_paths:
+        full_path = gallery_root / photo_path
+        image = Image.open(full_path)
+        exif = piexif.load(image.info["exif"])
+        metas = exif["Exif"]
+        created_at = metas[piexif.ExifIFD.DateTimeOriginal]
+        created_offset = metas[piexif.ExifIFD.OffsetTimeOriginal]
+        if (created_offset):
+            created_at_with_offset = created_at.decode() + created_offset.decode()
+            original_datetime = ( datetime.strptime(created_at_with_offset, "%Y:%m:%d %H:%M:%S%z")
+                                .astimezone(timezone.utc))
+        else:
+            original_datetime = (datetime
+                                .strptime(created_at.decode(), "%Y:%m:%d %H:%M:%S")
+                                .astimezone(europe_rome).astimezone(timezone.utc)
+                            )
+        photos.append(models.Photo(
+            folder=str(photo_path.parent),
+            filename=photo_path.name,
+            description=photo_path.name,
+            original_created_at=original_datetime
+        ))
     with get_session() as s:
         s.add_all(photos)
         s.commit()
