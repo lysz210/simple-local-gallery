@@ -11,6 +11,10 @@ class Photo(BaseModel):
     gps_point_id: Optional[int] = None
     original_created_at: datetime
 
+class LocatedPhoto(Photo):
+    track_uid: Optional[str] = None
+    gps_point: Optional['Point'] = None
+
 class PhotoSummary(BaseModel):
     folder: str
     total_photos: int

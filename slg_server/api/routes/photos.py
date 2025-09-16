@@ -21,6 +21,10 @@ async def get_photos_in_folder(filter: Annotated[dto.FilterPhotos, Query()]) -> 
 async def get_photo_by_id(id: int) -> Optional[dto.Photo]:
     return storage.find_photo_by_id(id)
 
+@router.get("/{id:int}/locate", name="Locate Photo on Track", operation_id="locate_photo_on_track")
+async def locate_photo_on_track(id: int) -> Optional[dto.LocatedPhoto]:
+    return storage.locate_photo_on_track(id)
+
 @router.post("/import", name="Import Photos", operation_id="import_photos")
 async def import_pphotos(photos: list[Path]) -> dict[str, int]:
     return storage.save_photos(photos)
