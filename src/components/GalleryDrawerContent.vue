@@ -6,20 +6,11 @@
       link to="/"
     ></v-list-item>
     
-    <v-list-group value="Photos Summaries" v-if="!photosSummaries.error">
-      <template v-slot:activator="{ props }">
-        <v-list-item
-          v-bind="props"
-          title="Photos Summaries"
-          prepend-icon="mdi-image-album"
-        ></v-list-item>
-      </template>
-      <v-list-item
-        v-for="summary in photosSummaries.data" :key="summary.folder"
-        :title="`${summary.folder}`"
-        :subtitle="`with ${summary.total_photos} photos`"
-      ></v-list-item>
-    </v-list-group>
+    <v-list-item
+      title="Photos"
+      prepend-icon="mdi-image-album"
+      link to="/photos"
+    ></v-list-item>
 
     <v-list-group value="Tracks Summaries" v-if="!tracksSummaries.error">
       <template v-slot:activator="{ props }">
@@ -45,10 +36,7 @@
 </template>
 
 <script lang="ts" setup>
-import { getPhotosSummaryQuery } from '@/slg-api/@pinia/colada/photos.gen';
 import { useTraksSummaries } from '@/stores/traks';
-import { useQuery } from '@pinia/colada';
 
-const { state: photosSummaries } = useQuery({...getPhotosSummaryQuery()})
 const { state: tracksSummaries } = useTraksSummaries()
 </script>
