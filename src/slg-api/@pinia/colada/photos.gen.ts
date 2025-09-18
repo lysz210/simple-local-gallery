@@ -2,7 +2,7 @@
 
 import { type Options, Photos } from '../../sdk.gen';
 import type { _JSONValue, UseQueryOptions, UseMutationOptions } from '@pinia/colada';
-import type { GetPhotosSummaryData, GetPhotosSummaryResponse, ImportPhotosData, ImportPhotosError, ImportPhotosResponse } from '../../types.gen';
+import type { GetPhotosSummaryData, GetPhotosSummaryResponse, GetPhotosInFolderData, GetPhotosInFolderError, GetPhotosInFolderResponse, GetPhotoByIdData, GetPhotoByIdError, GetPhotoByIdResponse, ImportPhotosData, ImportPhotosError, ImportPhotosResponse } from '../../types.gen';
 import type { AxiosError } from 'axios';
 import { client as _heyApiClient } from '../../client.gen';
 
@@ -52,6 +52,48 @@ export const getPhotosSummaryQuery = (options?: Options<GetPhotosSummaryData>): 
         key: getPhotosSummaryQueryKey(options),
         query: async (context) => {
             const { data } = await Photos.getPhotosSummary({
+                ...options,
+                ...context,
+                throwOnError: true
+            });
+            return data;
+        }
+    };
+};
+
+export const getPhotosInFolderQueryKey = (options?: Options<GetPhotosInFolderData>) => createQueryKey('getPhotosInFolder', options, [
+    'photos'
+]);
+
+/**
+ * Get Photos In Folder
+ */
+export const getPhotosInFolderQuery = (options?: Options<GetPhotosInFolderData>): UseQueryOptions<GetPhotosInFolderResponse, AxiosError<GetPhotosInFolderError>> => {
+    return {
+        key: getPhotosInFolderQueryKey(options),
+        query: async (context) => {
+            const { data } = await Photos.getPhotosInFolder({
+                ...options,
+                ...context,
+                throwOnError: true
+            });
+            return data;
+        }
+    };
+};
+
+export const getPhotoByIdQueryKey = (options: Options<GetPhotoByIdData>) => createQueryKey('getPhotoById', options, [
+    'photos'
+]);
+
+/**
+ * Get Photo By Id
+ */
+export const getPhotoByIdQuery = (options: Options<GetPhotoByIdData>): UseQueryOptions<GetPhotoByIdResponse, AxiosError<GetPhotoByIdError>> => {
+    return {
+        key: getPhotoByIdQueryKey(options),
+        query: async (context) => {
+            const { data } = await Photos.getPhotoById({
                 ...options,
                 ...context,
                 throwOnError: true

@@ -8,12 +8,8 @@ class Photo(BaseModel):
     folder: str
     filename: str
     description: str
-    gps_point_id: Optional[int] = None
     original_created_at: datetime
-
-class LocatedPhoto(Photo):
-    track_uid: Optional[str] = None
-    gps_point: Optional['Point'] = None
+    point: Optional['PointWithTrackUid'] = None
 
 class PhotoSummary(BaseModel):
     folder: str
@@ -34,6 +30,9 @@ class Point(BaseModel):
     longitude: float
     elevation: Optional[float] = None
     timestamp: datetime
+
+class PointWithTrackUid(Point):
+    track_uid: str
 
 class Bounds(BaseModel):
     min: Point

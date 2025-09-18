@@ -99,10 +99,10 @@ def save_photos(photos_paths: list[Path]) -> dict[str, int]:
         }
 
 
-def locate_photo_on_track(photo_id: int) -> dto.LocatedPhoto:
+def locate_photo_on_track(photo_id: int) -> list[dto.PointWithTrackUid]:
     with get_session() as s:
         photo = s.query(models.Photo).filter(models.Photo.id == photo_id).first()
-        located_photo = dto.LocatedPhoto.model_validate(photo, from_attributes=True, strict=False)
+        located_photo = dto.Photo.model_validate(photo, from_attributes=True, strict=False)
         if not photo or not photo.original_created_at:
             return located_photo
         photo_time = photo.original_created_at
@@ -112,8 +112,9 @@ def locate_photo_on_track(photo_id: int) -> dto.LocatedPhoto:
             func.min(models.GpsPoint.timestamp) <= photo_time
         ).all()
 
+        points: list[dto.PointWithTrackUid] = []
+
         for (track_uid,) in tracks_uid:
-            located_photo.track_uid = track_uid
             before_point = s.query(models.GpsPoint).filter(
                 models.GpsPoint.track_uid == track_uid,
                 models.GpsPoint.timestamp <= photo_time
@@ -122,16 +123,19 @@ def locate_photo_on_track(photo_id: int) -> dto.LocatedPhoto:
                 models.GpsPoint.track_uid == track_uid,
                 models.GpsPoint.timestamp >= photo_time
             ).order_by(models.GpsPoint.timestamp.asc()).first()
-            located_photo.gps_point = dto.Point(
+            
+            point = dto.PointWithTrackUid(
+                track_uid=track_uid,
                 latitude= (before_point.latitude + after_point.latitude) / 2,
                 longitude= (before_point.longitude + after_point.longitude) / 2,
                 elevation= (before_point.elevation + after_point.elevation) / 2,
                 timestamp=photo_time
-            )
+            ) if before_point.id != after_point.id else dto.PointWithTrackUid.model_validate(before_point, from_attributes=True, strict=False)
+            points.append(point)
 
-        return located_photo
+        return points
 
-def  tracks_summary() -> list[dto.TrackSummary]:
+def tracks_summary() -> list[dto.TrackSummary]:
     with get_session() as s:
         results = s.query(
             models.GpsTrack.uid,

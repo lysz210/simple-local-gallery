@@ -47,6 +47,33 @@ export type HttpValidationError = {
 };
 
 /**
+ * Photo
+ */
+export type Photo = {
+    /**
+     * Id
+     */
+    id: number;
+    /**
+     * Folder
+     */
+    folder: string;
+    /**
+     * Filename
+     */
+    filename: string;
+    /**
+     * Description
+     */
+    description: string;
+    /**
+     * Original Created At
+     */
+    original_created_at: string;
+    point?: PointWithTrackUid | null;
+};
+
+/**
  * PhotoSummary
  */
 export type PhotoSummary = {
@@ -88,6 +115,32 @@ export type Point = {
      * Timestamp
      */
     timestamp: string;
+};
+
+/**
+ * PointWithTrackUid
+ */
+export type PointWithTrackUid = {
+    /**
+     * Latitude
+     */
+    latitude: number;
+    /**
+     * Longitude
+     */
+    longitude: number;
+    /**
+     * Elevation
+     */
+    elevation?: number | null;
+    /**
+     * Timestamp
+     */
+    timestamp: string;
+    /**
+     * Track Uid
+     */
+    track_uid: string;
 };
 
 /**
@@ -170,6 +223,68 @@ export type GetPhotosSummaryResponses = {
 };
 
 export type GetPhotosSummaryResponse = GetPhotosSummaryResponses[keyof GetPhotosSummaryResponses];
+
+export type GetPhotosInFolderData = {
+    body?: never;
+    path?: never;
+    query?: {
+        /**
+         * Folder
+         */
+        folder?: string | null;
+    };
+    url: '/api/v1/photos/search';
+};
+
+export type GetPhotosInFolderErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type GetPhotosInFolderError = GetPhotosInFolderErrors[keyof GetPhotosInFolderErrors];
+
+export type GetPhotosInFolderResponses = {
+    /**
+     * Response Get Photos In Folder
+     * Successful Response
+     */
+    200: Array<Photo>;
+};
+
+export type GetPhotosInFolderResponse = GetPhotosInFolderResponses[keyof GetPhotosInFolderResponses];
+
+export type GetPhotoByIdData = {
+    body?: never;
+    path: {
+        /**
+         * Id
+         */
+        id: number;
+    };
+    query?: never;
+    url: '/api/v1/photos/{id}';
+};
+
+export type GetPhotoByIdErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type GetPhotoByIdError = GetPhotoByIdErrors[keyof GetPhotoByIdErrors];
+
+export type GetPhotoByIdResponses = {
+    /**
+     * Response Get Photo By Id
+     * Successful Response
+     */
+    200: Photo | null;
+};
+
+export type GetPhotoByIdResponse = GetPhotoByIdResponses[keyof GetPhotoByIdResponses];
 
 export type ImportPhotosData = {
     /**
@@ -313,6 +428,37 @@ export type ImportPgxFileResponses = {
 };
 
 export type ImportPgxFileResponse = ImportPgxFileResponses[keyof ImportPgxFileResponses];
+
+export type LocatePhotoOnTrackData = {
+    body?: never;
+    path?: never;
+    query: {
+        /**
+         * Photo Id
+         */
+        photo_id: number;
+    };
+    url: '/api/v1/tracks/locate-photo';
+};
+
+export type LocatePhotoOnTrackErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type LocatePhotoOnTrackError = LocatePhotoOnTrackErrors[keyof LocatePhotoOnTrackErrors];
+
+export type LocatePhotoOnTrackResponses = {
+    /**
+     * Response Locate Photo On Track
+     * Successful Response
+     */
+    200: Array<PointWithTrackUid>;
+};
+
+export type LocatePhotoOnTrackResponse = LocatePhotoOnTrackResponses[keyof LocatePhotoOnTrackResponses];
 
 export type GetFilesystemSummaryData = {
     body?: never;

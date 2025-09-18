@@ -2,7 +2,7 @@
 
 import { type Options, Tracks } from '../../sdk.gen';
 import type { _JSONValue, UseQueryOptions, UseMutationOptions } from '@pinia/colada';
-import type { GetTracksSummaryData, GetTracksSummaryResponse, InspectGpxFileData, InspectGpxFileError, InspectGpxFileResponse, ImportPgxFileData, ImportPgxFileError, ImportPgxFileResponse } from '../../types.gen';
+import type { GetTracksSummaryData, GetTracksSummaryResponse, InspectGpxFileData, InspectGpxFileError, InspectGpxFileResponse, ImportPgxFileData, ImportPgxFileError, ImportPgxFileResponse, LocatePhotoOnTrackData, LocatePhotoOnTrackError, LocatePhotoOnTrackResponse } from '../../types.gen';
 import type { AxiosError } from 'axios';
 import { client as _heyApiClient } from '../../client.gen';
 
@@ -89,6 +89,22 @@ export const importPgxFileMutation = (options: Options<ImportPgxFileData>): UseM
     return {
         mutation: async (fnOptions) => {
             const { data } = await Tracks.importPgxFile({
+                ...options,
+                ...fnOptions,
+                throwOnError: true
+            });
+            return data;
+        }
+    };
+};
+
+/**
+ * Locate Photo On Track
+ */
+export const locatePhotoOnTrackMutation = (options: Options<LocatePhotoOnTrackData>): UseMutationOptions<LocatePhotoOnTrackResponse, Options<LocatePhotoOnTrackData>, AxiosError<LocatePhotoOnTrackError>> => {
+    return {
+        mutation: async (fnOptions) => {
+            const { data } = await Tracks.locatePhotoOnTrack({
                 ...options,
                 ...fnOptions,
                 throwOnError: true
