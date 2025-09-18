@@ -31,6 +31,20 @@ def photos_summary():
             func.max(models.Photo.original_created_at).label('last_taken_at'),
         ).group_by(models.Photo.folder).all()
 
+def to_photo_dto(photo: models.Photo) -> dto.Photo:
+    photo_dto = dto.Photo.model_validate(
+        photo,
+        from_attributes=True,
+        strict=False
+    )
+    if photo.gps_point:
+        photo_dto.point = dto.PointWithTrackUid.model_validate(
+            photo.gps_point,
+            from_attributes=True,
+            strict=False
+        )
+    return photo_dto
+
 def search_photos(filter: dto.FilterPhotos) -> list[dto.Photo]:
     gallery_root = settings.GALLERY_ROOT
     folder = filter.folder
@@ -45,21 +59,13 @@ def search_photos(filter: dto.FilterPhotos) -> list[dto.Photo]:
             query = query.filter(models.Photo.folder == str(folder))
         photos = query.all()
         return [
-            dto.Photo.model_validate(
-                photo,
-                from_attributes=True,
-                strict=False
-            )
+            to_photo_dto(photo)
             for photo in photos
         ]
 def find_photo_by_id(id: int) -> Optional[dto.Photo]:
     with get_session() as s:
         photo = s.query(models.Photo).filter(models.Photo.id == id).first()
-        return dto.Photo.model_validate(
-            photo,
-            from_attributes=True,
-            strict=False
-        ) if photo else None
+        return to_photo_dto(photo) if photo else None
 
 def save_photos(photos_paths: list[Path]) -> dict[str, int]:
     europe_rome = ZoneInfo('Europe/Rome')
@@ -98,6 +104,18 @@ def save_photos(photos_paths: list[Path]) -> dict[str, int]:
                )) 
         }
 
+def update_photo_point(photo_id: int, point: dto.PointWithTrackUid) -> Optional[dto.Photo]:
+    with get_session() as s:
+        if not point.id:
+            point_model = models.GpsPoint(**point.model_dump())
+            s.add(point_model)
+            s.commit()
+            point.id = point_model.id
+
+        photo_model = s.query(models.Photo).filter(models.Photo.id == photo_id).first()
+        photo_model.gps_point_id = point.id
+        s.commit()
+        return to_photo_dto(photo_model)
 
 def locate_photo_on_track(photo_id: int) -> list[dto.PointWithTrackUid]:
     with get_session() as s:

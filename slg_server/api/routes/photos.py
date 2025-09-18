@@ -21,6 +21,10 @@ async def get_photos_in_folder(filter: Annotated[dto.FilterPhotos, Query()]) -> 
 async def get_photo_by_id(id: int) -> Optional[dto.Photo]:
     return storage.find_photo_by_id(id)
 
+@router.put("/{id:int}/point", name="Update Photo Point", operation_id="update_photo_point")
+async def update_photo_point(id: int, point: dto.PointWithTrackUid) -> Optional[dto.Photo]:
+    return storage.update_photo_point(id, point)
+
 @router.post("/import", name="Import Photos", operation_id="import_photos")
 async def import_pphotos(photos: list[Path]) -> dict[str, int]:
     return storage.save_photos(photos)

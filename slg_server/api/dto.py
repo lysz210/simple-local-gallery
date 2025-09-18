@@ -26,6 +26,7 @@ class FileSystemSummary(BaseModel):
     gpx_files_count: int
 
 class Point(BaseModel):
+    id: Optional[int] = None
     latitude: float
     longitude: float
     elevation: Optional[float] = None

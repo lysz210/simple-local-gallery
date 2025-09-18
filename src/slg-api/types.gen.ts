@@ -100,6 +100,10 @@ export type PhotoSummary = {
  */
 export type Point = {
     /**
+     * Id
+     */
+    id?: number | null;
+    /**
      * Latitude
      */
     latitude: number;
@@ -121,6 +125,10 @@ export type Point = {
  * PointWithTrackUid
  */
 export type PointWithTrackUid = {
+    /**
+     * Id
+     */
+    id?: number | null;
     /**
      * Latitude
      */
@@ -285,6 +293,37 @@ export type GetPhotoByIdResponses = {
 };
 
 export type GetPhotoByIdResponse = GetPhotoByIdResponses[keyof GetPhotoByIdResponses];
+
+export type UpdatePhotoPointData = {
+    body: PointWithTrackUid;
+    path: {
+        /**
+         * Id
+         */
+        id: number;
+    };
+    query?: never;
+    url: '/api/v1/photos/{id}/point';
+};
+
+export type UpdatePhotoPointErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type UpdatePhotoPointError = UpdatePhotoPointErrors[keyof UpdatePhotoPointErrors];
+
+export type UpdatePhotoPointResponses = {
+    /**
+     * Response Update Photo Point
+     * Successful Response
+     */
+    200: Photo | null;
+};
+
+export type UpdatePhotoPointResponse = UpdatePhotoPointResponses[keyof UpdatePhotoPointResponses];
 
 export type ImportPhotosData = {
     /**

@@ -2,7 +2,7 @@
 
 import { type Options, Photos } from '../../sdk.gen';
 import type { _JSONValue, UseQueryOptions, UseMutationOptions } from '@pinia/colada';
-import type { GetPhotosSummaryData, GetPhotosSummaryResponse, GetPhotosInFolderData, GetPhotosInFolderError, GetPhotosInFolderResponse, GetPhotoByIdData, GetPhotoByIdError, GetPhotoByIdResponse, ImportPhotosData, ImportPhotosError, ImportPhotosResponse } from '../../types.gen';
+import type { GetPhotosSummaryData, GetPhotosSummaryResponse, GetPhotosInFolderData, GetPhotosInFolderError, GetPhotosInFolderResponse, GetPhotoByIdData, GetPhotoByIdError, GetPhotoByIdResponse, UpdatePhotoPointData, UpdatePhotoPointError, UpdatePhotoPointResponse, ImportPhotosData, ImportPhotosError, ImportPhotosResponse } from '../../types.gen';
 import type { AxiosError } from 'axios';
 import { client as _heyApiClient } from '../../client.gen';
 
@@ -96,6 +96,22 @@ export const getPhotoByIdQuery = (options: Options<GetPhotoByIdData>): UseQueryO
             const { data } = await Photos.getPhotoById({
                 ...options,
                 ...context,
+                throwOnError: true
+            });
+            return data;
+        }
+    };
+};
+
+/**
+ * Update Photo Point
+ */
+export const updatePhotoPointMutation = (options: Options<UpdatePhotoPointData>): UseMutationOptions<UpdatePhotoPointResponse, Options<UpdatePhotoPointData>, AxiosError<UpdatePhotoPointError>> => {
+    return {
+        mutation: async (fnOptions) => {
+            const { data } = await Photos.updatePhotoPoint({
+                ...options,
+                ...fnOptions,
                 throwOnError: true
             });
             return data;
