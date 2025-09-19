@@ -13,7 +13,7 @@ async def get_photos_summary() -> list[dto.PhotoSummary]:
     summaries = storage.photos_summary()
     return [dto.PhotoSummary.model_validate(item._mapping) for item in summaries]
 
-@router.get("/search", name="Get Photos in Folder", operation_id="get_photos_in_folder")
+@router.get("/search", name="Search photos", operation_id="search_photos")
 async def get_photos_in_folder(filter: Annotated[dto.FilterPhotos, Query()]) -> list[dto.Photo]:
     return storage.search_photos(filter)
 

@@ -98,15 +98,20 @@ export const importPgxFileMutation = (options: Options<ImportPgxFileData>): UseM
     };
 };
 
+export const locatePhotoOnTrackQueryKey = (options: Options<LocatePhotoOnTrackData>) => createQueryKey('locatePhotoOnTrack', options, [
+    'tracks'
+]);
+
 /**
  * Locate Photo On Track
  */
-export const locatePhotoOnTrackMutation = (options: Options<LocatePhotoOnTrackData>): UseMutationOptions<LocatePhotoOnTrackResponse, Options<LocatePhotoOnTrackData>, AxiosError<LocatePhotoOnTrackError>> => {
+export const locatePhotoOnTrackQuery = (options: Options<LocatePhotoOnTrackData>): UseQueryOptions<LocatePhotoOnTrackResponse, AxiosError<LocatePhotoOnTrackError>> => {
     return {
-        mutation: async (fnOptions) => {
+        key: locatePhotoOnTrackQueryKey(options),
+        query: async (context) => {
             const { data } = await Tracks.locatePhotoOnTrack({
                 ...options,
-                ...fnOptions,
+                ...context,
                 throwOnError: true
             });
             return data;

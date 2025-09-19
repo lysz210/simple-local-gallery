@@ -2,7 +2,7 @@
 
 import { type Options, Photos } from '../../sdk.gen';
 import type { _JSONValue, UseQueryOptions, UseMutationOptions } from '@pinia/colada';
-import type { GetPhotosSummaryData, GetPhotosSummaryResponse, GetPhotosInFolderData, GetPhotosInFolderError, GetPhotosInFolderResponse, GetPhotoByIdData, GetPhotoByIdError, GetPhotoByIdResponse, UpdatePhotoPointData, UpdatePhotoPointError, UpdatePhotoPointResponse, ImportPhotosData, ImportPhotosError, ImportPhotosResponse } from '../../types.gen';
+import type { GetPhotosSummaryData, GetPhotosSummaryResponse, SearchPhotosData, SearchPhotosError, SearchPhotosResponse, GetPhotoByIdData, GetPhotoByIdError, GetPhotoByIdResponse, UpdatePhotoPointData, UpdatePhotoPointError, UpdatePhotoPointResponse, ImportPhotosData, ImportPhotosError, ImportPhotosResponse } from '../../types.gen';
 import type { AxiosError } from 'axios';
 import { client as _heyApiClient } from '../../client.gen';
 
@@ -61,18 +61,18 @@ export const getPhotosSummaryQuery = (options?: Options<GetPhotosSummaryData>): 
     };
 };
 
-export const getPhotosInFolderQueryKey = (options?: Options<GetPhotosInFolderData>) => createQueryKey('getPhotosInFolder', options, [
+export const searchPhotosQueryKey = (options?: Options<SearchPhotosData>) => createQueryKey('searchPhotos', options, [
     'photos'
 ]);
 
 /**
- * Get Photos In Folder
+ * Search Photos
  */
-export const getPhotosInFolderQuery = (options?: Options<GetPhotosInFolderData>): UseQueryOptions<GetPhotosInFolderResponse, AxiosError<GetPhotosInFolderError>> => {
+export const searchPhotosQuery = (options?: Options<SearchPhotosData>): UseQueryOptions<SearchPhotosResponse, AxiosError<SearchPhotosError>> => {
     return {
-        key: getPhotosInFolderQueryKey(options),
+        key: searchPhotosQueryKey(options),
         query: async (context) => {
-            const { data } = await Photos.getPhotosInFolder({
+            const { data } = await Photos.searchPhotos({
                 ...options,
                 ...context,
                 throwOnError: true

@@ -232,7 +232,7 @@ export type GetPhotosSummaryResponses = {
 
 export type GetPhotosSummaryResponse = GetPhotosSummaryResponses[keyof GetPhotosSummaryResponses];
 
-export type GetPhotosInFolderData = {
+export type SearchPhotosData = {
     body?: never;
     path?: never;
     query?: {
@@ -244,24 +244,24 @@ export type GetPhotosInFolderData = {
     url: '/api/v1/photos/search';
 };
 
-export type GetPhotosInFolderErrors = {
+export type SearchPhotosErrors = {
     /**
      * Validation Error
      */
     422: HttpValidationError;
 };
 
-export type GetPhotosInFolderError = GetPhotosInFolderErrors[keyof GetPhotosInFolderErrors];
+export type SearchPhotosError = SearchPhotosErrors[keyof SearchPhotosErrors];
 
-export type GetPhotosInFolderResponses = {
+export type SearchPhotosResponses = {
     /**
-     * Response Get Photos In Folder
+     * Response Search Photos
      * Successful Response
      */
     200: Array<Photo>;
 };
 
-export type GetPhotosInFolderResponse = GetPhotosInFolderResponses[keyof GetPhotosInFolderResponses];
+export type SearchPhotosResponse = SearchPhotosResponses[keyof SearchPhotosResponses];
 
 export type GetPhotoByIdData = {
     body?: never;
