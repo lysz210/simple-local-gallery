@@ -13,6 +13,7 @@ declare module 'vue' {
     FsSelectedPhotos: typeof import('./components/FsSelectedPhotos.vue')['default']
     FsTracks: typeof import('./components/FsTracks.vue')['default']
     GalleryDrawerContent: typeof import('./components/GalleryDrawerContent.vue')['default']
+    Photo: typeof import('./components/Photo.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     TrackMap: typeof import('./components/TrackMap.vue')['default']

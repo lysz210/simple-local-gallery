@@ -1,6 +1,7 @@
 <template>
 <v-container>
-    <v-row><v-col cols="12">
+<v-row>
+    <v-col cols="12">
         <v-autocomplete
             label="Select"
             :items="photosSummaries"
@@ -23,13 +24,25 @@
             ></v-list-item>
             </template>
         </v-autocomplete>
-    </v-col></v-row>
+    </v-col>
+    <v-col v-for="photo in photos" :key="photo.id">
+        <Photo
+        :photo="photo"
+        @gps-point-updated="queryCache.invalidateQueries({ key: [{_id: 'searchPhotos', query: { folder: selectedFolder }}]})"
+        ></Photo>
+    </v-col>
+</v-row>
 </v-container>
 </template>
 
 <script setup lang="ts">
-import { usePhotosSummaries } from '@/stores/photos'
+import Photo from '@/components/Photo.vue'
+import { usePhotosInFolder, usePhotosSummaries } from '@/stores/photos'
+import { useQueryCache } from '@pinia/colada'
 
-const selectedFolder = ref(null)
+const queryCache = useQueryCache()
+
 const { data: photosSummaries } = usePhotosSummaries()
+const { selectedFolder, data: photos } = usePhotosInFolder()
+
 </script>
