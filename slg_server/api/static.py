@@ -2,7 +2,8 @@ from pathlib import Path
 from fastapi import HTTPException
 from starlette.responses import FileResponse
 from starlette.types import Receive, Scope, Send
-from PIL import Image, ExifTags
+
+from slg_server.services.photos import ensure_thumbnail
 
 from ..core.config import settings
 from urllib.parse import parse_qs
@@ -36,11 +37,8 @@ class StaticPhotos:
             await response(scope, receive, send)
             return
         raise HTTPException(status_code=404)
-    
 
 class Thumbnails:
-    def __init__(self):
-        self.root = settings.thumbnails_root
 
     def _extract_size(self, scope: Scope) -> SizeType:
         query_string = scope.get("query_string", b"")
@@ -72,41 +70,9 @@ class Thumbnails:
         path: str = scope["path"]
         static_root = scope.get("root_path", "")
         relative_path = path[len(static_root) + 1:]
-
-        origilal_photo = settings.GALLERY_ROOT / relative_path
-        if not origilal_photo.is_file() or origilal_photo.suffix.lower() not in {".jpg", ".jpeg"}:
-            raise HTTPException(status_code=404)
         
         size = self._extract_size(scope)
-        fullpath = self.root / size / relative_path
-
-        if not fullpath.is_file():
-            fullpath.parent.mkdir(parents=True, exist_ok=True)
-
-            thumbinail_size = int(size)
-                
-            try:
-                with Image.open(origilal_photo) as img:
-                    try:
-                        exif = img._getexif()
-                        if exif is not None:
-                            orientation_key = next(
-                                (k for k, v in ExifTags.TAGS.items() if v == "Orientation"), None
-                            )
-                            if orientation_key and orientation_key in exif:
-                                orientation = exif[orientation_key]
-                                if orientation == 3:
-                                    img = img.rotate(180, expand=True)
-                                elif orientation == 6:
-                                    img = img.rotate(270, expand=True)
-                                elif orientation == 8:
-                                    img = img.rotate(90, expand=True)
-                    except Exception:
-                        pass
-                    img.thumbnail((thumbinail_size, thumbinail_size))
-                    img.save(fullpath, "JPEG")
-            except Exception:
-                raise HTTPException(status_code=500, detail="Failed to create thumbnail")
+        fullpath = ensure_thumbnail(relative_path, size)
 
         response = FileResponse(fullpath)
         await response(scope, receive, send)
