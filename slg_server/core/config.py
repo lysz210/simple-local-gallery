@@ -8,12 +8,16 @@ from pydantic import (
     AnyUrl,
     BeforeValidator,
     EmailStr,
+    SecretStr,
     computed_field,
+    field_serializer,
     model_validator
 )
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from sqlalchemy import create_engine
 from typing_extensions import Self
+
+from google.genai import Client
 
 from ..storage import models
 
@@ -41,7 +45,7 @@ class Settings(BaseSettings):
         extra="ignore",
     )
     API_V1_STR: str = "/api/v1"
-    SECRET_KEY: str = secrets.token_urlsafe(32)
+    SECRET_KEY: SecretStr = secrets.token_urlsafe(32)
     # 60 minutes * 24 hours * 8 days = 8 days
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 8
     FRONTEND_HOST: str = "http://localhost:3000"
@@ -61,9 +65,9 @@ class Settings(BaseSettings):
     PROJECT_NAME: str
 
     FIRST_SUPERUSER: EmailStr
-    FIRST_SUPERUSER_PASSWORD: str
+    FIRST_SUPERUSER_PASSWORD: SecretStr
 
-    def _check_default_secret(self, var_name: str, value: str | None) -> None:
+    def _check_default_secret(self, var_name: str, value: SecretStr | None) -> None:
         if value == "changethis":
             message = (
                 f'The value of {var_name} is "changethis", '
@@ -104,5 +108,15 @@ class Settings(BaseSettings):
         thumb_root.mkdir(exist_ok=True)
         return thumb_root
 
+    GEMINI_API_KEY: Optional[SecretStr] = None
+
+    @computed_field
+    @property
+    def gemini(self) -> Client:
+        if self.GEMINI_API_KEY is None:
+            raise RuntimeError("GEMINI_API_KEY is not set in the configuration.")
+        return Client(
+            api_key=self.GEMINI_API_KEY.get_secret_value(),
+        )
 
 settings = Settings()  # type: ignore

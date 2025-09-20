@@ -45,6 +45,11 @@ def to_photo_dto(photo: models.Photo) -> dto.Photo:
         )
     return photo_dto
 
+def get_photo_path(id: int) -> Path:
+    with get_session() as s:
+        photo = s.query(models.Photo).filter(models.Photo.id == id).first()
+        return Path(photo.folder) / photo.filename
+
 def search_photos(filter: dto.FilterPhotos) -> list[dto.Photo]:
     gallery_root = settings.GALLERY_ROOT
     folder = filter.folder

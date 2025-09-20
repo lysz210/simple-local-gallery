@@ -74,6 +74,24 @@ export type Photo = {
 };
 
 /**
+ * PhotoInfo
+ */
+export type PhotoInfo = {
+    /**
+     * Id
+     */
+    id: number;
+    /**
+     * Description
+     */
+    description: string;
+    /**
+     * Tags
+     */
+    tags: Array<string>;
+};
+
+/**
  * PhotoSummary
  */
 export type PhotoSummary = {
@@ -576,6 +594,36 @@ export type ClearThumbnailsCacheResponses = {
      */
     200: unknown;
 };
+
+export type InpectPhotoData = {
+    body?: never;
+    path?: never;
+    query: {
+        /**
+         * Id
+         */
+        id: number;
+    };
+    url: '/api/v1/aiinspect-photo';
+};
+
+export type InpectPhotoErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type InpectPhotoError = InpectPhotoErrors[keyof InpectPhotoErrors];
+
+export type InpectPhotoResponses = {
+    /**
+     * Successful Response
+     */
+    200: PhotoInfo;
+};
+
+export type InpectPhotoResponse = InpectPhotoResponses[keyof InpectPhotoResponses];
 
 export type ClientOptions = {
     baseURL: 'http://localhost:8000' | (string & {});

@@ -11,6 +11,11 @@ class Photo(BaseModel):
     original_created_at: datetime
     point: Optional['PointWithTrackUid'] = None
 
+class PhotoInfo(BaseModel):
+    id: int
+    description: str
+    tags: list[str]
+
 class PhotoSummary(BaseModel):
     folder: str
     total_photos: int
