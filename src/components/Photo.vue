@@ -8,7 +8,7 @@ flat
     >
     <v-card-title class="text-white">{{ photo.description }}</v-card-title>
     <v-card-subtitle class="text-white" v-if="point">
-        LAT: {{ point.latitude }} LNG: {{ point.longitude }}
+        LAT: {{ point.latitude }} LNG: {{ point.longitude }} TRACK {{ point.track_uid }}
     </v-card-subtitle>
     </v-img>
 
@@ -29,9 +29,11 @@ import { useMutation, useQuery } from '@pinia/colada';
 
 const { photo } = defineProps<{ photo: Photo }>()
 
-const emit = defineEmits(["gpsPointUpdated"])
+const emit = defineEmits<{
+    (e: 'updateGpsPoint', point: PointWithTrackUid): void
+}>()
 
-const point = computed(() => photo.point)
+const point = ref(photo.point)
 
 const { data: suggetedGpsPoints } = useQuery({
     ...locatePhotoOnTrackQuery({
@@ -53,7 +55,10 @@ const { mutate: updatePhotoPoint } = useMutation({
         return data;
     },
     onSuccess: (data) => {
-        emit("gpsPointUpdated")
+        if (data?.point) {
+            point.value = data.point
+            emit("updateGpsPoint", data.point)
+        }
     }
 })
 

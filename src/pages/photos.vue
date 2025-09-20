@@ -28,7 +28,7 @@
     <v-col v-for="photo in photos" :key="photo.id">
         <Photo
         :photo="photo"
-        @gps-point-updated="queryCache.invalidateQueries({ key: [{_id: 'searchPhotos', query: { folder: selectedFolder }}]})"
+        @update-gps-point="(point: PointWithTrackUid) => photo.point = point"
         ></Photo>
     </v-col>
 </v-row>
@@ -37,6 +37,7 @@
 
 <script setup lang="ts">
 import Photo from '@/components/Photo.vue'
+import type { PointWithTrackUid, Photo as PhotoDto } from '@/slg-api'
 import { usePhotosInFolder, usePhotosSummaries } from '@/stores/photos'
 import { useQueryCache } from '@pinia/colada'
 
