@@ -2,7 +2,7 @@ from pathlib import Path
 from fastapi import HTTPException
 from starlette.responses import FileResponse
 from starlette.types import Receive, Scope, Send
-from PIL import Image
+from PIL import Image, ExifTags
 
 from ..core.config import settings
 from urllib.parse import parse_qs
@@ -87,6 +87,22 @@ class Thumbnails:
                 
             try:
                 with Image.open(origilal_photo) as img:
+                    try:
+                        exif = img._getexif()
+                        if exif is not None:
+                            orientation_key = next(
+                                (k for k, v in ExifTags.TAGS.items() if v == "Orientation"), None
+                            )
+                            if orientation_key and orientation_key in exif:
+                                orientation = exif[orientation_key]
+                                if orientation == 3:
+                                    img = img.rotate(180, expand=True)
+                                elif orientation == 6:
+                                    img = img.rotate(270, expand=True)
+                                elif orientation == 8:
+                                    img = img.rotate(90, expand=True)
+                    except Exception:
+                        pass
                     img.thumbnail((thumbinail_size, thumbinail_size))
                     img.save(fullpath, "JPEG")
             except Exception:
