@@ -43,6 +43,11 @@ const importPhotos = async () => {
             body: selectedPhotos
         })
         console.log('Import response:', response)
+        for (const path of Object.keys(response ?? {})) {
+            const lastSlashIndex = path.lastIndexOf('/');
+            let folder = path.substring(0, lastSlashIndex);
+            await fsStore.removeSelectedPhoto(folder, path)
+        }
     } catch (error) {
         console.error('Error importing photos:', error)
     }

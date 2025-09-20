@@ -5,9 +5,9 @@
       bg-color="primary"
       fixed-tabs
     >
-      <v-tab :value="GPX_TAB">Gpx files</v-tab>
-      <v-tab :value="PHOTOS_TAB">Photos folder</v-tab>
-      <v-tab :value="SELECTED_PHOTOS_TAB">Selected Photos</v-tab>
+    <v-tab :value="PHOTOS_TAB">Photos folder</v-tab>
+    <v-tab :value="SELECTED_PHOTOS_TAB">Selected Photos</v-tab>
+    <v-tab :value="GPX_TAB">Gpx files</v-tab>
     </v-tabs>
 
     <v-card-text>
@@ -34,7 +34,7 @@ import { useFsStore } from '@/stores/fs'
 const GPX_TAB = 'gpx'
 const PHOTOS_TAB = 'photos'
 const SELECTED_PHOTOS_TAB = 'selected_photos'
-const tab = ref(GPX_TAB)
+const tab = ref(PHOTOS_TAB)
 
 const fsStore = useFsStore()
 
