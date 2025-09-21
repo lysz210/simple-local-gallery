@@ -5,7 +5,8 @@ from .routes import (
     settings,
     tracks,
     filesystem,
-    ai
+    ai,
+    flickr
 )
 
 api_router = APIRouter()
@@ -14,3 +15,4 @@ api_router.include_router(settings.router)
 api_router.include_router(tracks.router)
 api_router.include_router(filesystem.router)
 api_router.include_router(ai.router)
+api_router.include_router(flickr.router, prefix="/socials")

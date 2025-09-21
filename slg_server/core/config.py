@@ -1,6 +1,7 @@
 from pathlib import Path
 import secrets
 from tkinter.filedialog import askdirectory
+from urllib.parse import urljoin
 import warnings
 from typing import Annotated, Any, Literal, Optional
 
@@ -8,9 +9,9 @@ from pydantic import (
     AnyUrl,
     BeforeValidator,
     EmailStr,
+    HttpUrl,
     SecretStr,
     computed_field,
-    field_serializer,
     model_validator
 )
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -120,3 +121,31 @@ class Settings(BaseSettings):
         )
 
 settings = Settings()  # type: ignore
+
+class FlickrSettings(BaseSettings):
+    model_config = SettingsConfigDict(
+        # Use top level .env file (one level above ./backend/)
+        env_file=".env",
+        env_ignore_empty=True,
+        env_prefix='FLICKR_',
+        extra="ignore",
+    )
+
+    API_KEY: SecretStr
+    SECRET:  SecretStr
+    OAUTH_BASE_URL: HttpUrl
+
+    @computed_field
+    @property
+    def request_token_url(self) -> str:
+        return urljoin(self.OAUTH_BASE_URL.unicode_string(), 'request_token')
+
+    @computed_field
+    @property
+    def authorization_url(self) -> str:
+        return urljoin(self.OAUTH_BASE_URL.unicode_string(), 'authorize')
+    
+    @computed_field
+    @property
+    def access_token_url(self) -> str:
+        return urljoin(self.OAUTH_BASE_URL.unicode_string(), 'access_token')

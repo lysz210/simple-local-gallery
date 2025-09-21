@@ -1,0 +1,32 @@
+from typing import Optional
+from fastapi import APIRouter
+
+from ...core.config import FlickrSettings
+from ...services.flickr import FlickrService
+from .. import dto
+from fastapi import Request
+
+router = APIRouter(prefix='/flickr', tags=['flickr'])
+
+flickr_service: Optional[FlickrService] = None
+
+@router.get('')
+async def flickr() -> dto.FlickrResponse:
+    global flickr_service
+    if flickr_service is None:
+        flickr_service = FlickrService(FlickrSettings(), 'http://localhost:8000/api/v1/socials/flickr/oauth-callback')
+    state_or_redirect = await flickr_service.authorize()
+    
+    response = dto.FlickrResponse()
+    if isinstance(state_or_redirect, str):
+        response.redirect_uri = state_or_redirect
+    else:
+        response.state = state_or_redirect
+    return response
+
+@router.get('/oauth-callback')
+async def oauth_callback(request: Request) -> dto.FlickrState:
+    global flickr_service
+    if flickr_service is None:
+        raise RuntimeError("No flickr service available")
+    return await flickr_service.access(str(request.url))

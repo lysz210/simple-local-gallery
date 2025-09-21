@@ -1,7 +1,8 @@
 from datetime import datetime
 from pathlib import Path
 from typing import Optional
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
+from pydantic_core import Url
 
 class Photo(BaseModel):
     id: int
@@ -66,3 +67,22 @@ class TrackSummary(BaseModel):
 
 class FilterPhotos(BaseModel):
     folder: Optional[Path] = None
+
+class FlickrState(BaseModel):
+    fullname: str
+    user_nsid: str
+    username: str
+
+class FlickrResponse(BaseModel):
+    state: Optional[FlickrState] = None
+    redirect_uri: Optional[Url] = None
+
+class Token(BaseModel):
+    token: str = Field(alias="oauth_token")
+    token_secret: str = Field(alias="oauth_token_secret")
+
+class RequestToken(Token):
+    callback_confirmed: bool = Field(alias='oauth_callback_confirmed')
+
+class AccessToken(FlickrState, Token):
+    pass
