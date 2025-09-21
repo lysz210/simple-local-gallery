@@ -10,21 +10,33 @@ flat
     <v-card-subtitle class="text-white" v-if="point">
         LAT: {{ point.latitude }} LNG: {{ point.longitude }} TRACK {{ point.track_uid }}
     </v-card-subtitle>
+
+    <v-card-text v-if="aiInfo"
+    class="text-white"
+    >
+    <p>Ai description</p>
+    {{ aiInfo.description }}
+
+    <v-chip-group column>
+        <v-chip v-for="tag in aiInfo.tags">{{ tag }}</v-chip>
+    </v-chip-group>
+    </v-card-text>
     </v-img>
 
-    <v-card-actions v-if="!point">
-        <v-btn
+    <v-card-actions>
+        <v-btn v-if="!point"
         v-for="(point, i) in suggetedGpsPoints" :kye="i"
         @click="updatePhotoPoint(point)"
         >{{ point }}</v-btn>
+        <v-btn @click="inspectPhoto(photo)">Inspect photo with AI</v-btn>
     </v-card-actions>
 </v-card>
 </template>
 
 <script setup lang="ts">
 import { locatePhotoOnTrackQuery } from '@/slg-api/@pinia/colada/tracks.gen';
-import { Photos } from '@/slg-api/sdk.gen';
-import type { Photo, PointWithTrackUid } from '@/slg-api/types.gen';
+import { Ai, Photos } from '@/slg-api/sdk.gen';
+import type { Photo, PhotoInfo, PointWithTrackUid } from '@/slg-api/types.gen';
 import { useMutation, useQuery } from '@pinia/colada';
 
 const { photo } = defineProps<{ photo: Photo }>()
@@ -34,6 +46,10 @@ const emit = defineEmits<{
 }>()
 
 const point = ref(photo.point)
+
+const show = ref(false)
+
+const aiInfo = ref<PhotoInfo|null>(null)
 
 const { data: suggetedGpsPoints } = useQuery({
     ...locatePhotoOnTrackQuery({
@@ -62,4 +78,16 @@ const { mutate: updatePhotoPoint } = useMutation({
     }
 })
 
+const { mutate: inspectPhoto } = useMutation({
+    mutation: async (photo: Photo) => {
+        const { data } = await Ai.inpectPhoto({
+            query: { id: photo.id },
+            throwOnError: true
+        });
+        return data;
+    },
+    onSuccess: (data) => {
+        aiInfo.value = data
+    }
+})
 </script>

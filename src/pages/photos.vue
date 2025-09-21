@@ -25,7 +25,9 @@
             </template>
         </v-autocomplete>
     </v-col>
-    <v-col v-for="photo in photos" :key="photo.id">
+    <v-col v-for="photo in photos" :key="photo.id"
+    cols="12"
+    >
         <Photo
         :photo="photo"
         @update-gps-point="(point: PointWithTrackUid) => photo.point = point"
