@@ -10,17 +10,7 @@ flat
     <v-card-subtitle class="text-white" v-if="point">
         LAT: {{ point.latitude }} LNG: {{ point.longitude }} TRACK {{ point.track_uid }}
     </v-card-subtitle>
-
-    <v-card-text v-if="aiInfo"
-    class="text-white"
-    >
-    <p>Ai description</p>
-    {{ aiInfo.description }}
-
-    <v-chip-group column>
-        <v-chip v-for="tag in aiInfo.tags">{{ tag }}</v-chip>
-    </v-chip-group>
-    </v-card-text>
+    <v-card-text class="text-white">{{ currentPhoto.description }}</v-card-text>
     </v-img>
 
     <v-card-actions>
@@ -28,15 +18,35 @@ flat
         v-for="(point, i) in suggetedGpsPoints" :kye="i"
         @click="updatePhotoPoint(point)"
         >{{ point }}</v-btn>
-        <v-btn @click="inspectPhoto(photo)">Inspect photo with AI</v-btn>
+        <v-btn v-if="!aiInfo"
+        @click="inspectPhoto(photo)"
+        >Inspect photo with AI</v-btn>
     </v-card-actions>
+    <v-expand-transition>
+        <v-card-text v-if="aiInfo"
+        >
+        <v-textarea
+        label="Ai description"
+        v-model="newDescription"
+        ></v-textarea>
+        
+        <v-chip-group
+        v-model="selectedAiTags"
+        multiple column
+        >
+            <v-chip v-for="tag in aiInfo.tags" :value="tag" filter>{{ tag }}</v-chip>
+        </v-chip-group>
+        {{ selectedAiTags }}
+        <v-btn @click="patchPhoto({ description: newDescription, tags: selectedAiTags })">Update photo infos</v-btn>
+        </v-card-text>
+    </v-expand-transition>
 </v-card>
 </template>
 
 <script setup lang="ts">
 import { locatePhotoOnTrackQuery } from '@/slg-api/@pinia/colada/tracks.gen';
 import { Ai, Photos } from '@/slg-api/sdk.gen';
-import type { Photo, PhotoInfo, PointWithTrackUid } from '@/slg-api/types.gen';
+import type { Photo, PhotoInfo, PhotoPatch, PointWithTrackUid } from '@/slg-api/types.gen';
 import { useMutation, useQuery } from '@pinia/colada';
 
 const { photo } = defineProps<{ photo: Photo }>()
@@ -45,11 +55,15 @@ const emit = defineEmits<{
     (e: 'updateGpsPoint', point: PointWithTrackUid): void
 }>()
 
+const currentPhoto = ref<Photo>(photo)
+
 const point = ref(photo.point)
 
 const show = ref(false)
 
 const aiInfo = ref<PhotoInfo|null>(null)
+const newDescription = ref<string|null>(null)
+const selectedAiTags = ref<string[]>([])
 
 const { data: suggetedGpsPoints } = useQuery({
     ...locatePhotoOnTrackQuery({
@@ -87,7 +101,26 @@ const { mutate: inspectPhoto } = useMutation({
         return data;
     },
     onSuccess: (data) => {
-        aiInfo.value = data
+        aiInfo.value = data;
+        newDescription.value = data.description;
+        selectedAiTags.value.push(...data.tags);
+    }
+})
+
+const { mutate: patchPhoto } = useMutation({
+    mutation: async (body: PhotoPatch) => {
+        const { data } = await Photos.patchPhoto({
+            path: { id: photo.id },
+            body,
+            throwOnError: true
+        });
+        return data;
+    },
+    onSuccess: (data) => {
+        currentPhoto.value = data;
+        aiInfo.value = null;
+        selectedAiTags.value = [];
+        newDescription.value = null;
     }
 })
 </script>
