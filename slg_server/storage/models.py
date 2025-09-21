@@ -1,6 +1,7 @@
 from typing import Optional
 from datetime import datetime
 from sqlalchemy import (
+    JSON,
     ForeignKey,
     DateTime,
     UniqueConstraint
@@ -16,7 +17,9 @@ from sqlalchemy.orm import (
 )
 
 class Base(DeclarativeBase):
-    pass
+    type_annotation_map = {
+        list[str]: JSON
+    }
 
 class Photo(Base):
     __tablename__ = "photos"
@@ -26,6 +29,7 @@ class Photo(Base):
     filename: Mapped[str] = mapped_column(unique=True, sqlite_on_conflict_unique="IGNORE")
     description: Mapped[str] = mapped_column()
     original_created_at: Mapped[datetime] = mapped_column()
+    tags: Mapped[Optional[list[str]]] = mapped_column()
 
     gps_point_id: Mapped[Optional[int]] = mapped_column(ForeignKey("points.id"))
     gps_point: Mapped[Optional["GpsPoint"]] = relationship(back_populates="photos")

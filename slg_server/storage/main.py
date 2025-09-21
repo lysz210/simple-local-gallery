@@ -45,6 +45,17 @@ def to_photo_dto(photo: models.Photo) -> dto.Photo:
         )
     return photo_dto
 
+def update_photo(id: int, photo_patch: dto.PhotoPatch) -> dto.Photo:
+    with get_session() as s:
+        photo = s.query(models.Photo).filter(models.Photo.id == id).first()
+        for key, value in photo_patch.model_dump(exclude_unset=True).items():
+            if key == 'point_id':
+                photo.gps_point_id = value
+            else:
+                setattr(photo, key, value)
+        s.commit()
+        return to_photo_dto(photo)
+
 def get_photo_path(id: int) -> Path:
     with get_session() as s:
         photo = s.query(models.Photo).filter(models.Photo.id == id).first()

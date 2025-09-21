@@ -70,6 +70,10 @@ export type Photo = {
      * Original Created At
      */
     original_created_at: string;
+    /**
+     * Tags
+     */
+    tags?: Array<string> | null;
     point?: PointWithTrackUid | null;
 };
 
@@ -89,6 +93,24 @@ export type PhotoInfo = {
      * Tags
      */
     tags: Array<string>;
+};
+
+/**
+ * PhotoPatch
+ */
+export type PhotoPatch = {
+    /**
+     * Tags
+     */
+    tags?: Array<string> | null;
+    /**
+     * Description
+     */
+    description?: string | null;
+    /**
+     * Point Id
+     */
+    point_id?: number | null;
 };
 
 /**
@@ -311,6 +333,36 @@ export type GetPhotoByIdResponses = {
 };
 
 export type GetPhotoByIdResponse = GetPhotoByIdResponses[keyof GetPhotoByIdResponses];
+
+export type PatchPhotoData = {
+    body: PhotoPatch;
+    path: {
+        /**
+         * Id
+         */
+        id: number;
+    };
+    query?: never;
+    url: '/api/v1/photos/{id}';
+};
+
+export type PatchPhotoErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type PatchPhotoError = PatchPhotoErrors[keyof PatchPhotoErrors];
+
+export type PatchPhotoResponses = {
+    /**
+     * Successful Response
+     */
+    200: Photo;
+};
+
+export type PatchPhotoResponse = PatchPhotoResponses[keyof PatchPhotoResponses];
 
 export type UpdatePhotoPointData = {
     body: PointWithTrackUid;
@@ -604,7 +656,7 @@ export type InpectPhotoData = {
          */
         id: number;
     };
-    url: '/api/v1/aiinspect-photo';
+    url: '/api/v1/ai/inspect-photo';
 };
 
 export type InpectPhotoErrors = {

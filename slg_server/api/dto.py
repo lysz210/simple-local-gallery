@@ -9,7 +9,13 @@ class Photo(BaseModel):
     filename: str
     description: str
     original_created_at: datetime
+    tags: Optional[list[str]] = None
     point: Optional['PointWithTrackUid'] = None
+
+class PhotoPatch(BaseModel):
+    tags: Optional[list[str]] = None
+    description: Optional[str] = None
+    point_id: Optional[int] = None
 
 class PhotoInfo(BaseModel):
     id: int
