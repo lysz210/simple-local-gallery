@@ -23,6 +23,73 @@ export type FileSystemSummary = {
 };
 
 /**
+ * FlickrPhotoInfo
+ */
+export type FlickrPhotoInfo = {
+    /**
+     * Id
+     */
+    id: number;
+    /**
+     * Title
+     */
+    title: string;
+    /**
+     * Description
+     */
+    description?: string | null;
+    /**
+     * Posted
+     */
+    posted?: string | null;
+    /**
+     * Taken
+     */
+    taken?: string | null;
+    /**
+     * Lastupdate
+     */
+    lastupdate?: string | null;
+    /**
+     * Tags
+     */
+    tags?: Array<string> | null;
+    /**
+     * Urls
+     */
+    urls?: Array<string> | null;
+};
+
+/**
+ * FlickrResponse
+ */
+export type FlickrResponse = {
+    state?: FlickrState | null;
+    /**
+     * Redirect Uri
+     */
+    redirect_uri?: string | null;
+};
+
+/**
+ * FlickrState
+ */
+export type FlickrState = {
+    /**
+     * Fullname
+     */
+    fullname: string;
+    /**
+     * User Nsid
+     */
+    user_nsid: string;
+    /**
+     * Username
+     */
+    username: string;
+};
+
+/**
  * FolderSummary
  */
 export type FolderSummary = {
@@ -676,6 +743,52 @@ export type InpectPhotoResponses = {
 };
 
 export type InpectPhotoResponse = InpectPhotoResponses[keyof InpectPhotoResponses];
+
+export type LoginData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/socials/flickr/login';
+};
+
+export type LoginResponses = {
+    /**
+     * Successful Response
+     */
+    200: FlickrResponse;
+};
+
+export type LoginResponse = LoginResponses[keyof LoginResponses];
+
+export type PhotoInfoData = {
+    body?: never;
+    path?: never;
+    query: {
+        /**
+         * Id
+         */
+        id: number;
+    };
+    url: '/api/v1/socials/flickr/info';
+};
+
+export type PhotoInfoErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type PhotoInfoError = PhotoInfoErrors[keyof PhotoInfoErrors];
+
+export type PhotoInfoResponses = {
+    /**
+     * Successful Response
+     */
+    200: FlickrPhotoInfo;
+};
+
+export type PhotoInfoResponse = PhotoInfoResponses[keyof PhotoInfoResponses];
 
 export type ClientOptions = {
     baseURL: 'http://localhost:8000' | (string & {});

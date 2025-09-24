@@ -134,6 +134,7 @@ class FlickrSettings(BaseSettings):
     API_KEY: SecretStr
     SECRET:  SecretStr
     OAUTH_BASE_URL: HttpUrl
+    SERVICE_BASE_URL: HttpUrl
 
     @computed_field
     @property

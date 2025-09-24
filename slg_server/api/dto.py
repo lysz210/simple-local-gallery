@@ -1,7 +1,7 @@
 from datetime import datetime
 from pathlib import Path
 from typing import Optional
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, HttpUrl
 from pydantic_core import Url
 
 class Photo(BaseModel):
@@ -86,3 +86,13 @@ class RequestToken(Token):
 
 class AccessToken(FlickrState, Token):
     pass
+
+class FlickrPhotoInfo(BaseModel):
+    id: int
+    title: str
+    description: Optional[str] = None
+    posted: Optional[datetime] = None
+    taken: Optional[datetime] = None
+    lastupdate: Optional[datetime] = None
+    tags: Optional[list[str]] = None
+    urls: Optional[list[HttpUrl]] = None
