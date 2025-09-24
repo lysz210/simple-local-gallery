@@ -20,8 +20,10 @@ class PhotoPatch(BaseModel):
 
 class PhotoInfo(BaseModel):
     id: int
+    title: str
     description: str
     tags: list[str]
+    feedback: Optional[str]
 
 class PhotoSummary(BaseModel):
     folder: str

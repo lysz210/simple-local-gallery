@@ -153,6 +153,10 @@ export type PhotoInfo = {
      */
     id: number;
     /**
+     * Title
+     */
+    title: string;
+    /**
      * Description
      */
     description: string;
@@ -160,6 +164,10 @@ export type PhotoInfo = {
      * Tags
      */
     tags: Array<string>;
+    /**
+     * Feedback
+     */
+    feedback: string | null;
 };
 
 /**
