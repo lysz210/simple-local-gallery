@@ -97,17 +97,20 @@ def save_photos(photos_paths: list[Path]) -> dict[str, int]:
         image = Image.open(full_path)
         exif = piexif.load(image.info["exif"])
         metas = exif["Exif"]
-        created_at = metas[piexif.ExifIFD.DateTimeOriginal]
-        created_offset = metas[piexif.ExifIFD.OffsetTimeOriginal]
-        if (created_offset):
+        created_at = metas.get(piexif.ExifIFD.DateTimeOriginal, None)
+        created_offset = metas.get(piexif.ExifIFD.OffsetTimeOriginal, None)
+        if created_offset:
             created_at_with_offset = created_at.decode() + created_offset.decode()
             original_datetime = ( datetime.strptime(created_at_with_offset, "%Y:%m:%d %H:%M:%S%z")
                                 .astimezone(timezone.utc))
-        else:
+        elif created_at:
             original_datetime = (datetime
                                 .strptime(created_at.decode(), "%Y:%m:%d %H:%M:%S")
                                 .astimezone(europe_rome).astimezone(timezone.utc)
                             )
+        else:
+            original_datetime = datetime.now(timezone.utc)
+
         photos.append(models.Photo(
             folder=str(photo_path.parent),
             filename=photo_path.name,
