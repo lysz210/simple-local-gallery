@@ -1,12 +1,22 @@
 <template>
 <v-card
 flat
+class="text-white"
 >
     <v-img
     :src="`http://localhost:8000/thumbnails/${photo.folder}/${photo.filename}`"
     width="100%"
     >
-    <v-card-title class="text-white">{{ photo.description }}</v-card-title>
+    <v-toolbar class="text-white" color="transparent">
+        <v-toolbar-title>{{ photo.description }}</v-toolbar-title>
+        <ai-helper :photo-id="photo.id"></ai-helper>
+    </v-toolbar>
+    <v-card-subtitle v-if="photo.tags">
+        <v-chip
+        v-for="tag in photo.tags" :key="tag"
+        variant="outlined"
+        >{{ tag }}</v-chip>
+    </v-card-subtitle>
     <v-card-subtitle class="text-white" v-if="point">
         LAT: {{ point.latitude }} LNG: {{ point.longitude }} TRACK {{ point.track_uid }}
     </v-card-subtitle>
@@ -21,6 +31,7 @@ flat
         <v-btn v-if="!aiInfo"
         @click="inspectPhoto(photo)"
         >Inspect photo with AI</v-btn>
+        
     </v-card-actions>
     <v-expand-transition>
         <v-card-text v-if="aiInfo"
@@ -44,6 +55,7 @@ flat
 </template>
 
 <script setup lang="ts">
+import AiHelper from './AiHelper.vue';
 import { locatePhotoOnTrackQuery } from '@/slg-api/@pinia/colada/tracks.gen';
 import { Ai, Photos } from '@/slg-api/sdk.gen';
 import type { Photo, PhotoInfo, PhotoPatch, PointWithTrackUid } from '@/slg-api/types.gen';
