@@ -14,8 +14,9 @@ class Photo(BaseModel):
     point: Optional['PointWithTrackUid'] = None
 
 class PhotoPatch(BaseModel):
-    tags: Optional[list[str]] = None
+    title: Optional[str] = None
     description: Optional[str] = None
+    tags: Optional[list[str]] = None
     point_id: Optional[int] = None
 
 class PhotoInfo(BaseModel):

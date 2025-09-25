@@ -175,13 +175,17 @@ export type PhotoInfo = {
  */
 export type PhotoPatch = {
     /**
-     * Tags
+     * Title
      */
-    tags?: Array<string> | null;
+    title?: string | null;
     /**
      * Description
      */
     description?: string | null;
+    /**
+     * Tags
+     */
+    tags?: Array<string> | null;
     /**
      * Point Id
      */
