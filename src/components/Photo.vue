@@ -4,16 +4,17 @@ flat
 class="text-white"
 >
     <v-img
-    :src="`http://localhost:8000/thumbnails/${photo.folder}/${photo.filename}`"
+    :src="`http://localhost:8000/thumbnails/${currentPhoto.folder}/${currentPhoto.filename}`"
     width="100%"
     >
     <v-toolbar class="text-white" color="transparent">
-        <v-toolbar-title>{{ photo.description }}</v-toolbar-title>
-        <ai-helper :photo-id="photo.id"></ai-helper>
+        <v-toolbar-title>{{ currentPhoto.title }}</v-toolbar-title>
+        <ai-helper :photo-id="currentPhoto.id"></ai-helper>
+        <flickr-dialog v-if="socialStore.isFlickrActive" :photo="currentPhoto"></flickr-dialog>
     </v-toolbar>
-    <v-card-subtitle v-if="photo.tags">
+    <v-card-subtitle v-if="currentPhoto.tags">
         <v-chip
-        v-for="tag in photo.tags" :key="tag"
+        v-for="tag in currentPhoto.tags" :key="tag"
         variant="outlined"
         >{{ tag }}</v-chip>
     </v-card-subtitle>
@@ -56,10 +57,14 @@ class="text-white"
 
 <script setup lang="ts">
 import AiHelper from './AiHelper.vue';
+import FlickrDialog from './FlickrDialog.vue';
 import { locatePhotoOnTrackQuery } from '@/slg-api/@pinia/colada/tracks.gen';
 import { Ai, Photos } from '@/slg-api/sdk.gen';
 import type { Photo, PhotoInfo, PhotoPatch, PointWithTrackUid } from '@/slg-api/types.gen';
+import { useSocialStore } from '@/stores/social';
 import { useMutation, useQuery } from '@pinia/colada';
+
+const socialStore = useSocialStore();
 
 const { photo } = defineProps<{ photo: Photo }>()
 

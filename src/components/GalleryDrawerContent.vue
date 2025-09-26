@@ -32,11 +32,23 @@
       prepend-icon="mdi-file-tree"
       link to="/fs"
     ></v-list-item>
+
+    <v-list-item
+      :title="flickrTitle"
+      prepend-icon="mdi-share-variant"
+      @click="if (!socialStore.flickrUser) { socialStore.login(); }"
+    ></v-list-item>
+
   </v-list>
 </template>
 
 <script lang="ts" setup>
+import { useSocialStore } from '@/stores/social';
 import { useTraksSummaries } from '@/stores/traks';
 
 const { state: tracksSummaries } = useTraksSummaries()
+
+const socialStore = useSocialStore()
+
+const flickrTitle = computed(() => socialStore.flickrUser ? socialStore.flickrUser.fullname : 'Login')
 </script>
