@@ -80,7 +80,7 @@ class FlickrService:
             taken=datetime.strptime(flickr_photo['dates']['taken'], "%Y-%m-%d %H:%M:%S"),
             lastupdate=datetime.fromtimestamp(int(flickr_photo['dates']['lastupdate'])),
             urls=[url['_content'] for url in flickr_photo['urls']['url']],
-            tags = [tag for tag in flickr_photo['tags']['tag']]
+            tags = [tag['raw'] for tag in flickr_photo['tags']['tag']]
         )
 
         return info
