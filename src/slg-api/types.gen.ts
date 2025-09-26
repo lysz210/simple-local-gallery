@@ -130,9 +130,13 @@ export type Photo = {
      */
     filename: string;
     /**
+     * Title
+     */
+    title?: string | null;
+    /**
      * Description
      */
-    description: string;
+    description: string | null;
     /**
      * Original Created At
      */

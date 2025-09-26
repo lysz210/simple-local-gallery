@@ -27,7 +27,8 @@ class Photo(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     folder: Mapped[str] = mapped_column()
     filename: Mapped[str] = mapped_column(unique=True, sqlite_on_conflict_unique="IGNORE")
-    description: Mapped[str] = mapped_column()
+    title: Mapped[Optional[str]] = mapped_column()
+    description: Mapped[Optional[str]] = mapped_column()
     original_created_at: Mapped[datetime] = mapped_column()
     tags: Mapped[Optional[list[str]]] = mapped_column()
 

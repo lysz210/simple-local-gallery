@@ -114,7 +114,6 @@ def save_photos(photos_paths: list[Path]) -> dict[str, int]:
         photos.append(models.Photo(
             folder=str(photo_path.parent),
             filename=photo_path.name,
-            description=photo_path.name,
             original_created_at=original_datetime
         ))
     with get_session() as s:

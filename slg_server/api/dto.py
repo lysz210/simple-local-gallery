@@ -8,7 +8,8 @@ class Photo(BaseModel):
     id: int
     folder: str
     filename: str
-    description: str
+    title: Optional[str] = None
+    description: Optional[str]
     original_created_at: datetime
     tags: Optional[list[str]] = None
     point: Optional['PointWithTrackUid'] = None
