@@ -1,5 +1,6 @@
 from typing import Optional
 from datetime import datetime
+from uuid import UUID
 from sqlalchemy import (
     JSON,
     ForeignKey,
@@ -58,8 +59,25 @@ class GpsPoint(Base):
     track_uid: Mapped[Optional[str]] = mapped_column(ForeignKey("tracks.uid"))
     track: Mapped[Optional["GpsTrack"]] = relationship(back_populates="points")
 
+    address_uid: Mapped[Optional[UUID]] = mapped_column(ForeignKey("addresses.uid"))
+    address: Mapped[Optional['Address']] = relationship(back_populates="points")
+
     photos: Mapped[Optional[list["Photo"]]] = relationship(back_populates="gps_point")
     
     __table_args__ = (
         UniqueConstraint('track_uid', 'timestamp', name='_gps_unique_track_point'),
     )
+
+class Address(Base):
+    __tablename__ = "addresses"
+
+    uid: Mapped[UUID] = mapped_column(primary_key=True)
+    display_name: Mapped[str] = mapped_column()
+    country: Mapped[str] = mapped_column(index=True)
+    state: Mapped[Optional[str]] = mapped_column(index=True)
+    county: Mapped[Optional[str]] = mapped_column(index=True)
+    municipality: Mapped[Optional[str]] = mapped_column(index=True)
+    town: Mapped[Optional[str]] = mapped_column(index=True)
+    postcode: Mapped[Optional[str]] = mapped_column()
+
+    points: Mapped[Optional[list["GpsPoint"]]] = relationship(back_populates="address")

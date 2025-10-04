@@ -5,6 +5,7 @@ from urllib.parse import urljoin
 import warnings
 from typing import Annotated, Any, Literal, Optional
 
+import httpx
 from pydantic import (
     AnyUrl,
     BeforeValidator,
@@ -40,7 +41,7 @@ def init_gallery_root(root: Path) -> None:
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
-        # Use top level .env file (one level above ./backend/)
+        # Use top level .env file
         env_file=".env",
         env_ignore_empty=True,
         extra="ignore",
@@ -124,7 +125,7 @@ settings = Settings()  # type: ignore
 
 class FlickrSettings(BaseSettings):
     model_config = SettingsConfigDict(
-        # Use top level .env file (one level above ./backend/)
+        # Use top level .env file
         env_file=".env",
         env_ignore_empty=True,
         env_prefix='FLICKR_',
@@ -150,3 +151,25 @@ class FlickrSettings(BaseSettings):
     @property
     def access_token_url(self) -> str:
         return urljoin(self.OAUTH_BASE_URL.unicode_string(), 'access_token')
+
+class OsmNominatimSettings(BaseSettings):
+    model_config = SettingsConfigDict(
+        # Use topo level .env file
+        env_file=".env",
+        env_ignore_empty=True,
+        env_prefix='OSM_NOMINATIM_',
+        extra='ignore'
+    )
+
+    SERVICE_BASE_URL: HttpUrl
+    LANG: str
+    ZOOM: int
+
+    @computed_field
+    @property
+    def http_client(self) -> httpx.Client:
+        return httpx.Client(
+            base_url=self.SERVICE_BASE_URL.unicode_string(),
+            headers={'Accept-Language': self.LANG},
+            params={'format': 'json', 'zoom': self.ZOOM}
+        )

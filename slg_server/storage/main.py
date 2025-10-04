@@ -129,12 +129,24 @@ def save_photos(photos_paths: list[Path]) -> dict[str, int]:
 
 def update_photo_point(photo_id: int, point: dto.PointWithTrackUid) -> Optional[dto.Photo]:
     with get_session() as s:
+        address = models.Address(**point.address.model_dump())
+
+        existing_address = s.query(models.Address).filter_by(
+            uid=address.uid
+        ).first()
+        if existing_address:
+            address = existing_address
+        else:
+            s.add(address)
+            s.commit()
         if not point.id:
-            point_model = models.GpsPoint(**point.model_dump())
+            point_model = models.GpsPoint(**point.model_dump(exclude=['address']))
+            point_model.address = address
             s.add(point_model)
             s.commit()
             point.id = point_model.id
 
+        point_model.address = address
         photo_model = s.query(models.Photo).filter(models.Photo.id == photo_id).first()
         photo_model.gps_point_id = point.id
         s.commit()

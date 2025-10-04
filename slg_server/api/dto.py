@@ -1,6 +1,7 @@
 from datetime import datetime
 from pathlib import Path
 from typing import Optional
+from uuid import UUID
 from pydantic import BaseModel, Field, HttpUrl
 from pydantic_core import Url
 
@@ -47,6 +48,7 @@ class Point(BaseModel):
     longitude: float
     elevation: Optional[float] = None
     timestamp: datetime
+    address: Optional['Address'] = None
 
 class PointWithTrackUid(Point):
     track_uid: str
@@ -100,3 +102,13 @@ class FlickrPhotoInfo(BaseModel):
     lastupdate: Optional[datetime] = None
     tags: Optional[list[str]] = None
     urls: Optional[list[HttpUrl]] = None
+
+class Address(BaseModel):
+    uid: UUID
+    display_name: str
+    country: str
+    state: Optional[str] = None
+    county: Optional[str] = None
+    municipality: Optional[str] = None
+    town: Optional[str] = None
+    postcode: Optional[str] = None

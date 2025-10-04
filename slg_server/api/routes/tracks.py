@@ -31,4 +31,4 @@ async def import_gpx(gpx_file: str) -> str:
 
 @router.get("/locate-photo", name="Locate Photo on Track", operation_id="locate_photo_on_track")
 async def locate_photo_on_track(photo_id: int) -> list[dto.PointWithTrackUid]:
-    return storage.locate_photo_on_track(photo_id)
+    return await tracks_service.locate_photo_on_track(photo_id)
