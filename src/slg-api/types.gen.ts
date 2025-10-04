@@ -806,6 +806,36 @@ export type PhotoInfoResponses = {
 
 export type PhotoInfoResponse = PhotoInfoResponses[keyof PhotoInfoResponses];
 
+export type UpdatePhotoInfoData = {
+    body?: never;
+    path?: never;
+    query: {
+        /**
+         * Id
+         */
+        id: number;
+    };
+    url: '/api/v1/socials/flickr/update';
+};
+
+export type UpdatePhotoInfoErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type UpdatePhotoInfoError = UpdatePhotoInfoErrors[keyof UpdatePhotoInfoErrors];
+
+export type UpdatePhotoInfoResponses = {
+    /**
+     * Successful Response
+     */
+    200: FlickrPhotoInfo;
+};
+
+export type UpdatePhotoInfoResponse = UpdatePhotoInfoResponses[keyof UpdatePhotoInfoResponses];
+
 export type ClientOptions = {
     baseURL: 'http://localhost:8000' | (string & {});
 };

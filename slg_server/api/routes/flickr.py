@@ -1,5 +1,6 @@
-from typing import Optional
-from fastapi import APIRouter
+from typing import Annotated, Optional
+from fastapi import APIRouter, Header
+from pydantic import HttpUrl
 
 from ...core.config import FlickrSettings
 from ...services.flickr import FlickrService
@@ -37,3 +38,10 @@ async def photo_info(id: int) -> dto.FlickrPhotoInfo:
     if flickr_service is None:
         raise RuntimeError("No flickr service available")
     return await flickr_service.photo_info(id)
+
+@router.post('/update', name="Update Flickr Photo info", operation_id="update_photo_info")
+async def update_photo_info(id: int) -> dto.FlickrPhotoInfo:
+    global flickr_service
+    if flickr_service is None:
+        raise RuntimeError("No flickr service available")
+    return await flickr_service.update_photo_info(id)
