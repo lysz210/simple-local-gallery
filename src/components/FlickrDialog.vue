@@ -13,7 +13,7 @@
 
                 <v-card-actions>
                     <v-spacer></v-spacer>
-                    <!-- <v-btn @click="() => patchPhoto()">Update Photo info</v-btn> -->
+                    <v-btn @click="() => updateFlickrPhoto()">Update Photo info</v-btn>
                     <v-btn text="Close Dialog" @click="isActive.value = false"></v-btn>
                 </v-card-actions>
             </v-card>
@@ -23,8 +23,9 @@
 
 <script setup lang="ts">
 import { photoInfoQuery } from '@/slg-api/@pinia/colada/flickr.gen';
+import { Flickr } from '@/slg-api/sdk.gen';
 import type { Photo } from '@/slg-api/types.gen';
-import { useQuery } from '@pinia/colada';
+import { useMutation, useQuery } from '@pinia/colada';
 
 const { photo } = defineProps<{
     photo: Photo
@@ -38,5 +39,17 @@ const { data: info, isLoading } = useQuery({
         query: { id: photo.id }
     }),
     enabled: isOpened
+})
+
+const { mutate: updateFlickrPhoto } = useMutation({
+    mutation: async () => {
+        const { data } = await Flickr.updatePhotoInfo({
+            query: { id: photo.id }
+        });
+        return data;
+    },
+    onSettled: async () => {
+        isOpened.value = false;
+    }
 })
 </script>
