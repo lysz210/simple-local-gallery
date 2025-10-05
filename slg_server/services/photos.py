@@ -1,11 +1,15 @@
 
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Literal
 
 from fastapi import HTTPException
 from PIL import Image, ExifTags
+import piexif
 
 from ..core.config import settings
+from ..storage import main as storage
+from ..utils import exif as exif_utils
 
 SizeType = Literal["2048", "1024", "512", "256", "128"]
 
@@ -66,3 +70,37 @@ def ensure_thumbnail(
             raise HTTPException(status_code=500, detail="Failed to create thumbnail")
     
     return fullpath
+
+def export_photo_with_geo(photo_ids: list[int]) -> dict[int, Path]:
+    results: dict[int, Path] = {}
+    export_folder = settings.export_root / datetime.now().strftime('%Y%m%d_%H%M%S')
+    export_folder.mkdir(parents=True, exist_ok=True)
+    for id in photo_ids:
+        photo = storage.find_photo_by_id(id)
+        if photo is None or photo.point is None:
+            continue
+        point = photo.point
+        
+        photo_path = settings.GALLERY_ROOT / photo.folder / photo.filename
+
+        if not photo_path.exists():
+            continue
+
+        with Image.open(photo_path) as image:
+            exif = piexif.load(image.info['exif'])
+            gps = exif['GPS']
+            lat = exif_utils.dec_to_dms(point.latitude)
+            lng = exif_utils.dec_to_dms(point.longitude)
+            originalDatetime = photo.original_created_at.astimezone(timezone.utc)
+            gps[piexif.GPSIFD.GPSLatitude] = lat
+            gps[piexif.GPSIFD.GPSLatitudeRef] = 'N' if point.latitude >= 0 else 'S'
+            gps[piexif.GPSIFD.GPSLongitude] = lng
+            gps[piexif.GPSIFD.GPSLongitudeRef] = 'E' if point.longitude >= 0 else 'W'
+            gps[piexif.GPSIFD.GPSAltitude] = exif_utils.normalize_alt(point.elevation)
+            gps[piexif.GPSIFD.GPSDateStamp] = originalDatetime.strftime("%Y:%m:%d")
+            gps[piexif.GPSIFD.GPSTimeStamp] = (originalDatetime.hour, 1), (originalDatetime.minute, 1), (originalDatetime.second, 1)
+            exif_bytes = piexif.dump(exif)
+            full_path = export_folder / photo.filename
+            image.save(full_path, exif=exif_bytes, quality=100)
+            results[photo.id] = full_path
+    return results

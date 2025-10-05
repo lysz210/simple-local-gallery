@@ -5,6 +5,7 @@ from fastapi import APIRouter, Query
 
 from ...storage import main as storage
 from ...api import dto
+from ...services import photos
 
 router = APIRouter(prefix="/photos", tags=["photos"])
 
@@ -32,3 +33,7 @@ async def update_photo_point(id: int, point: dto.PointWithTrackUid) -> Optional[
 @router.post("/import", name="Import Photos", operation_id="import_photos")
 async def import_pphotos(photos: list[Path]) -> dict[str, int]:
     return storage.save_photos(photos)
+
+@router.post("/export_with_gps", name="Export photos with gps", operation_id="export_with_gps")
+async def export_photos(photo_ids: list[int]) -> dict[int, Path]:
+    return photos.export_photo_with_geo(photo_ids)

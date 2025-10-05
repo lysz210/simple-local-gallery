@@ -109,6 +109,13 @@ class Settings(BaseSettings):
         thumb_root = self.GALLERY_ROOT / ".thumbnails"
         thumb_root.mkdir(exist_ok=True)
         return thumb_root
+    
+    @computed_field # type: ingnore[prop-decorator]
+    @property
+    def export_root(self) -> Path:
+        export_root = Path.home() / 'Downloads' / 'slg_exports'
+        export_root.mkdir(exist_ok=True)
+        return export_root
 
     GEMINI_API_KEY: Optional[SecretStr] = None
 
